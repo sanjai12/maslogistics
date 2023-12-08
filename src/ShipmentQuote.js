@@ -9,7 +9,10 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import FlightIcon from '@mui/icons-material/Flight';
+
+import AddIcon from '@mui/icons-material/Add';
 import shipImage from './shipment.jpg';
+import InputAdornment from '@mui/material/InputAdornment';
 import SailingIcon from '@mui/icons-material/Sailing';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -24,11 +27,20 @@ import Tab from '@mui/material/Tab';
 import { Box, FormControl, FormControlLabel, FormLabel } from '@mui/material';
 import PortLoading from './components/PortLoading';
 
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import CustomizedSteppers from './components/Stepper';
 import ContactInformation from './components/ContactInformation';
 import QuoteCompletion from './components/QuoteCompletion';
+import FileUpload from './components/FileUpload';
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import { PlusOne } from '@mui/icons-material';
+import AirDetails from './components/AirDetails';
+import usePortDetails from './hooks/usePortDetail';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -62,9 +74,12 @@ function TabPanel(props) {
 }
 
 export default function ShipmentQuote() {
+  const { response, loading } = usePortDetails('Sea');
+  console.log(response);
   const [value, setValue] = React.useState(0);
   const [showContainerType, setShowContainerType] = React.useState(false);
   const [date, setDate] = React.useState(null);
+  const [containerCount, setContainerCount] = React.useState([0]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -174,10 +189,10 @@ export default function ShipmentQuote() {
                   spacing={2}
                 >
                   <Grid item xs={3}>
-                    <PortLoading label='POL' />
+                    <PortLoading label='POL' portRecords={response} />
                   </Grid>
                   <Grid item xs={3}>
-                    <PortLoading label='POD' />
+                    <PortLoading label='POD' portRecords={response} />
                   </Grid>
                   <Grid item xs={3}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -195,6 +210,45 @@ export default function ShipmentQuote() {
                       id='outlined-basic'
                       label='Commodity'
                       variant='outlined'
+                    />
+                  </Grid>
+                </Grid>
+                <Grid
+                  justifyContent={'space-between'}
+                  flexWrap={'nowrap'}
+                  container
+                  style={{ marginTop: 10 }}
+                  spacing={2}
+                >
+                  <Grid item xs={3}>
+                    <TextField
+                      fullWidth
+                      id='outlined-basic'
+                      label='Classification'
+                      variant='outlined'
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <TextField
+                      fullWidth
+                      id='outlined-basic'
+                      label='UN Number'
+                      variant='outlined'
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      id='outlined-basic'
+                      label='DG Decl. / MSDS / COA / Packaging Certificate if any'
+                      variant='outlined'
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position='start'>
+                            <FileUpload />
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
                 </Grid>
@@ -301,9 +355,125 @@ export default function ShipmentQuote() {
                     </Grid>
                   )}
                 </div>
+                <div>
+                  <Button
+                    style={{ marginTop: 15 }}
+                    variant='contained'
+                    endIcon={<AddIcon />}
+                    onClick={() =>
+                      setContainerCount((value) => [
+                        ...value,
+                        ...[value.length],
+                      ])
+                    }
+                  >
+                    Add New
+                  </Button>
+                  {containerCount.map((count) => (
+                    <Grid
+                      justifyContent={'space-between'}
+                      flexWrap={'nowrap'}
+                      container
+                      style={{ marginTop: 5 }}
+                      spacing={2}
+                    >
+                      <Grid item xs={2}>
+                        <FormControl fullWidth>
+                          <InputLabel id='demo-simple-select-label'>
+                            Container Type
+                          </InputLabel>
+                          <Select
+                            labelId='demo-simple-select-label'
+                            id='demo-simple-select'
+                            label='Container Type'
+                          >
+                            <MenuItem value={20}>20' OT</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={1}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='Quantity'
+                          variant='outlined'
+                        />
+                      </Grid>
+                      <Grid item xs={2}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='Gross Weight(KG)'
+                          variant='outlined'
+                          placeholder='0.00'
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='Length'
+                          variant='outlined'
+                          placeholder='0.00'
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='Width'
+                          variant='outlined'
+                          placeholder='0.00'
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='Height'
+                          variant='outlined'
+                          placeholder='0.00'
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='Unit'
+                          variant='outlined'
+                          placeholder='0.00'
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='Photo/Tech Drawing'
+                          variant='outlined'
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position='start'>
+                                <FileUpload />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <IconButton
+                          aria-label='delete'
+                          color='primary'
+                          size='large'
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  ))}
+                </div>
               </TabPanel>
               <TabPanel value={value} index={1}>
-                Air Details
+                <AirDetails />
               </TabPanel>
             </>
           )}
