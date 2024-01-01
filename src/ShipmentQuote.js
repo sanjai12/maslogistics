@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import FlightIcon from '@mui/icons-material/Flight';
 
 import AddIcon from '@mui/icons-material/Add';
 import shipImage from './shipment.jpg';
@@ -38,20 +35,9 @@ import QuoteCompletion from './components/QuoteCompletion';
 import FileUpload from './components/FileUpload';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import { PlusOne } from '@mui/icons-material';
 import AirDetails from './components/AirDetails';
 import usePortDetails from './hooks/usePortDetail';
-
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
+import useSavePortDetail from './hooks/useSavePortDetail';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,8 +60,33 @@ function TabPanel(props) {
 }
 
 export default function ShipmentQuote() {
-  const { response, loading } = usePortDetails('Sea');
-  console.log(response);
+  const { response } = usePortDetails('Sea');
+  const { saveResponse, loading, fetchData } = useSavePortDetail();
+  const [portState, setPortState] = React.useState({
+    type: 'Sea',
+    name: '',
+    company: '',
+    country: '',
+    email: '',
+    mobile: '',
+    address: '',
+    cargoType: '',
+    cargoSubType: '',
+    pol: '',
+    polName: '',
+    pod: '',
+    podName: '',
+    shippingDate: '',
+    commodity: '',
+    dangerous: '',
+    classification: '',
+    unNo: '',
+    msdsFile: null,
+    intoTerm: '',
+    intoTermAddress: '',
+    totalCbm: '',
+    quoteItems: [],
+  });
   const [value, setValue] = React.useState(0);
   const [showContainerType, setShowContainerType] = React.useState(false);
   const [date, setDate] = React.useState(null);
@@ -83,21 +94,31 @@ export default function ShipmentQuote() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const handlePortState = (event) => {
+    setPortState((oldState) => ({
+      ...oldState,
+      [event.target.id]: event.target.value,
+    }));
+  };
+
+  const loadPortDetails = (value, id, name) => {
+    setPortState((oldState) => ({
+      ...oldState,
+      [id]: value.id,
+      [name]: value.packingName,
+    }));
+  };
+
+  const savePortRecord = async () => {
+    await fetchData(portState);
+  };
   const [activeStep, setActiveStep] = React.useState(0);
 
   return (
     <>
       <Card sx={{ width: '90%', padding: 2 }}>
         <CustomizedSteppers activeStep={activeStep} />
-        {/* <CardHeader
-          avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label='recipe'>
-              <FlightIcon />
-            </Avatar>
-          }
-          title='Shipment Information'
-          subheader='November 06, 2023'
-        /> */}
         <CardMedia
           style={{ marginTop: 10 }}
           component='img'
@@ -142,15 +163,23 @@ export default function ShipmentQuote() {
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
-                    onChange={() => setShowContainerType(true)}
+                    id='cargoType'
+                    value={portState.cargoType}
+                    onChange={(event) => {
+                      setPortState((oldValues) => ({
+                        ...oldValues,
+                        cargoType: event.target.value,
+                      }));
+                      setShowContainerType(true);
+                    }}
                   >
                     <FormControlLabel
-                      value='Containerized Cargo'
+                      value='Containerized'
                       control={<Radio />}
                       label='Containerized Cargo'
                     />
                     <FormControlLabel
-                      value='Oversized Cargo'
+                      value='Oversized'
                       control={<Radio />}
                       label='Oversized Cargo'
                     />
@@ -159,7 +188,7 @@ export default function ShipmentQuote() {
                     <div style={{ marginTop: 5 }}>
                       <FormLabel
                         style={{ color: '#262424de' }}
-                        id='demo-row-radio-buttons-group-label'
+                        id='cargoSubType'
                       >
                         Container Type
                       </FormLabel>
@@ -167,14 +196,22 @@ export default function ShipmentQuote() {
                         row
                         aria-labelledby='demo-row-radio-buttons-group-label'
                         name='row-radio-buttons-group'
+                        id='cargoSubType'
+                        value={portState.cargoSubType}
+                        onChange={(event) => {
+                          setPortState((oldValues) => ({
+                            ...oldValues,
+                            cargoSubType: event.target.value,
+                          }));
+                        }}
                       >
                         <FormControlLabel
-                          value='spc'
+                          value='FCL'
                           control={<Radio />}
                           label='Special Containers'
                         />
                         <FormControlLabel
-                          value='bbrr'
+                          value='BreakBulk / RoRo'
                           control={<Radio />}
                           label='BreakBulk / RoRo'
                         />
@@ -189,10 +226,22 @@ export default function ShipmentQuote() {
                   spacing={2}
                 >
                   <Grid item xs={3}>
-                    <PortLoading label='POL' portRecords={response} />
+                    <PortLoading
+                      label='POL'
+                      portRecords={response}
+                      id='pol'
+                      name='polName'
+                      loadPortDetails={loadPortDetails}
+                    />
                   </Grid>
                   <Grid item xs={3}>
-                    <PortLoading label='POD' portRecords={response} />
+                    <PortLoading
+                      label='POD'
+                      portRecords={response}
+                      id='pod'
+                      name='podName'
+                      loadPortDetails={loadPortDetails}
+                    />
                   </Grid>
                   <Grid item xs={3}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -200,14 +249,24 @@ export default function ShipmentQuote() {
                         className='dateStyle'
                         label='Preferred Shipping Date'
                         value={date}
-                        onChange={(newValue) => setDate(newValue)}
+                        onChange={(newValue) => {
+                          setPortState((oldValues) => ({
+                            ...oldValues,
+                            shippingDate: newValue
+                              ? dayjs(newValue).format('YYYY-MM-DD')
+                              : null,
+                          }));
+                          setDate(newValue);
+                        }}
                       />
                     </LocalizationProvider>
                   </Grid>
                   <Grid item xs={3}>
                     <TextField
                       fullWidth
-                      id='outlined-basic'
+                      onChange={handlePortState}
+                      id='commodity'
+                      value={portState.commodity}
                       label='Commodity'
                       variant='outlined'
                     />
@@ -223,7 +282,9 @@ export default function ShipmentQuote() {
                   <Grid item xs={3}>
                     <TextField
                       fullWidth
-                      id='outlined-basic'
+                      onChange={handlePortState}
+                      id='classification'
+                      value={portState.classification}
                       label='Classification'
                       variant='outlined'
                     />
@@ -231,7 +292,9 @@ export default function ShipmentQuote() {
                   <Grid item xs={3}>
                     <TextField
                       fullWidth
-                      id='outlined-basic'
+                      onChange={handlePortState}
+                      id='unNo'
+                      value={portState.unNo}
                       label='UN Number'
                       variant='outlined'
                     />
@@ -265,14 +328,22 @@ export default function ShipmentQuote() {
                         row
                         aria-labelledby='demo-row-radio-buttons-group-label'
                         name='row-radio-buttons-group'
+                        onChange={(event) => {
+                          setPortState((oldValues) => ({
+                            ...oldValues,
+                            dangerous: event.target.value,
+                          }));
+                        }}
+                        id='dangerous'
+                        value={portState.dangerous}
                       >
                         <FormControlLabel
-                          value='spc'
+                          value='Yes'
                           control={<Radio />}
                           label='Yes'
                         />
                         <FormControlLabel
-                          value='bbrr'
+                          value='No'
                           control={<Radio />}
                           label='No'
                         />
@@ -300,6 +371,14 @@ export default function ShipmentQuote() {
                             row
                             aria-labelledby='demo-row-radio-buttons-group-label'
                             name='row-radio-buttons-group'
+                            onChange={(event) => {
+                              setPortState((oldValues) => ({
+                                ...oldValues,
+                                intoTerm: event.target.value,
+                              }));
+                            }}
+                            id='intoTerm'
+                            value={portState.intoTerm}
                           >
                             <FormControlLabel
                               value='FOB'
@@ -347,9 +426,11 @@ export default function ShipmentQuote() {
                       <Grid item xs={6}>
                         <TextField
                           fullWidth
-                          id='outlined-basic'
                           label='Delivery Address'
                           variant='outlined'
+                          onChange={handlePortState}
+                          id='intoTermAddress'
+                          value={portState.intoTermAddress}
                         />
                       </Grid>
                     </Grid>
@@ -477,7 +558,12 @@ export default function ShipmentQuote() {
               </TabPanel>
             </>
           )}
-          {activeStep === 1 && <ContactInformation />}
+          {activeStep === 1 && (
+            <ContactInformation
+              portState={portState}
+              handlePortState={handlePortState}
+            />
+          )}
           {activeStep === 2 && <QuoteCompletion />}
           <div
             style={{
@@ -496,7 +582,12 @@ export default function ShipmentQuote() {
             <Button
               disabled={activeStep === 2 ? true : false}
               variant='contained'
-              onClick={() => setActiveStep((value) => value + 1)}
+              onClick={() => {
+                if (activeStep === 1) {
+                  savePortRecord();
+                }
+                setActiveStep((value) => value + 1);
+              }}
             >
               Next
             </Button>

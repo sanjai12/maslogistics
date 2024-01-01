@@ -14,7 +14,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeIcon from '@mui/icons-material/Home';
 
-const ContactInformation = () => {
+const ContactInformation = ({ portState, handlePortState }) => {
   return (
     <>
       <Grid
@@ -27,8 +27,10 @@ const ContactInformation = () => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            id='input-with-icon-textfield'
+            id='name'
             label='Company Name'
+            value={portState?.name}
+            onChange={handlePortState}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -49,9 +51,11 @@ const ContactInformation = () => {
       >
         <Grid item xs={6}>
           <TextField
-            id='input-with-icon-textfield'
+            id='company'
             label='Client Name'
             fullWidth
+            value={portState?.company}
+            onChange={handlePortState}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -64,9 +68,11 @@ const ContactInformation = () => {
         </Grid>
         <Grid item xs={6}>
           <TextField
-            id='input-with-icon-textfield'
+            id='country'
             label='Country'
             fullWidth
+            value={portState?.country}
+            onChange={handlePortState}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -87,9 +93,11 @@ const ContactInformation = () => {
       >
         <Grid item xs={6}>
           <TextField
-            id='input-with-icon-textfield'
+            id='email'
             label='Email Address'
             fullWidth
+            value={portState?.email}
+            onChange={handlePortState}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -102,9 +110,11 @@ const ContactInformation = () => {
         </Grid>
         <Grid item xs={6}>
           <TextField
-            id='input-with-icon-textfield'
+            id='phone'
             label='Phone'
             fullWidth
+            value={portState?.phone}
+            onChange={handlePortState}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -125,11 +135,13 @@ const ContactInformation = () => {
       >
         <Grid item xs={12}>
           <TextField
-            id='input-with-icon-textfield'
+            id='address'
             label='Address'
             multiline
             rows={2}
             fullWidth
+            value={portState?.address}
+            onChange={handlePortState}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
