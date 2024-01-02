@@ -59,6 +59,8 @@ function TabPanel(props) {
   );
 }
 
+let seqNumber = 0;
+
 export default function ShipmentQuote() {
   const { response } = usePortDetails('Sea');
   const { saveResponse, loading, fetchData } = useSavePortDetail();
@@ -87,12 +89,22 @@ export default function ShipmentQuote() {
     totalCbm: '',
     quoteItems: [],
   });
+  const [quoteItemData, setQuoteItemData] = React.useState([]);
   const [value, setValue] = React.useState(0);
   const [showContainerType, setShowContainerType] = React.useState(false);
   const [date, setDate] = React.useState(null);
-  const [containerCount, setContainerCount] = React.useState([0]);
+  const [containerCount, setContainerCount] = React.useState([seqNumber]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleQuoteState = (value, id, index) => {
+    let quoteItems = [...quoteItemData];
+    if (!quoteItems[index]) {
+      quoteItems[index] = {};
+    }
+    quoteItems[index][id] = value;
+    setQuoteItemData(quoteItems);
   };
 
   const handlePortState = (event) => {
@@ -110,8 +122,38 @@ export default function ShipmentQuote() {
     }));
   };
 
+  const uploadFileData = (event, id) => {
+    if (!event.target.files) {
+      return;
+    }
+    setPortState((oldState) => ({
+      ...oldState,
+      [id]: event.target.files[0],
+    }));
+  };
+
+  const uploadQuoteFileData = (event, id, index) => {
+    if (!event.target.files) {
+      return;
+    }
+    let quoteItems = [...quoteItemData];
+    if (!quoteItems[index]) {
+      quoteItems[index] = {};
+    }
+    quoteItems[index][id] = event.target.files[0];
+    setQuoteItemData(quoteItems);
+  };
+
+  const deleteQuotes = (id) => {
+    let quoteItems = [...quoteItemData].filter((value, index) => index !== id);
+    setContainerCount(containerCount.filter((d) => d !== id));
+    setQuoteItemData(quoteItems);
+  };
+
   const savePortRecord = async () => {
-    await fetchData(portState);
+    const portData = { ...portState };
+    portData.quoteItems = quoteItemData;
+    await fetchData(portData);
   };
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -308,7 +350,11 @@ export default function ShipmentQuote() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position='start'>
-                            <FileUpload />
+                            <FileUpload
+                              id='msdsFile'
+                              uploadFileData={uploadFileData}
+                              fileData={portState?.msdsFile}
+                            />
                           </InputAdornment>
                         ),
                       }}
@@ -442,10 +488,7 @@ export default function ShipmentQuote() {
                     variant='contained'
                     endIcon={<AddIcon />}
                     onClick={() =>
-                      setContainerCount((value) => [
-                        ...value,
-                        ...[value.length],
-                      ])
+                      setContainerCount((value) => [...value, ...[seqNumber++]])
                     }
                   >
                     Add New
@@ -465,64 +508,116 @@ export default function ShipmentQuote() {
                           </InputLabel>
                           <Select
                             labelId='demo-simple-select-label'
-                            id='demo-simple-select'
                             label='Container Type'
+                            onChange={(event) =>
+                              handleQuoteState(
+                                event.target.value,
+                                'containerType',
+                                count
+                              )
+                            }
+                            id='containerType'
+                            value={quoteItemData?.[count]?.containerType}
                           >
-                            <MenuItem value={20}>20' OT</MenuItem>
+                            <MenuItem value={`20' OT`}>20' OT</MenuItem>
                           </Select>
                         </FormControl>
                       </Grid>
                       <Grid item xs={1}>
                         <TextField
                           fullWidth
-                          id='outlined-basic'
                           label='Quantity'
                           variant='outlined'
+                          onChange={(event) =>
+                            handleQuoteState(
+                              event.target.value,
+                              'containerQty',
+                              count
+                            )
+                          }
+                          id='containerQty'
+                          value={quoteItemData?.[count]?.containerQty}
                         />
                       </Grid>
                       <Grid item xs={2}>
                         <TextField
                           fullWidth
-                          id='outlined-basic'
                           label='Gross Weight(KG)'
                           variant='outlined'
                           placeholder='0.00'
+                          onChange={(event) =>
+                            handleQuoteState(
+                              event.target.value,
+                              'grossWeight',
+                              count
+                            )
+                          }
+                          id='grossWeight'
+                          value={quoteItemData?.[count]?.grossWeight}
                         />
                       </Grid>
                       <Grid item xs={1}>
                         <TextField
                           fullWidth
-                          id='outlined-basic'
                           label='Length'
                           variant='outlined'
                           placeholder='0.00'
+                          onChange={(event) =>
+                            handleQuoteState(
+                              event.target.value,
+                              'length',
+                              count
+                            )
+                          }
+                          id='length'
+                          value={quoteItemData?.[count]?.length}
                         />
                       </Grid>
                       <Grid item xs={1}>
                         <TextField
                           fullWidth
-                          id='outlined-basic'
                           label='Width'
                           variant='outlined'
                           placeholder='0.00'
+                          onChange={(event) =>
+                            handleQuoteState(event.target.value, 'width', count)
+                          }
+                          id='width'
+                          value={quoteItemData?.[count]?.width}
                         />
                       </Grid>
                       <Grid item xs={1}>
                         <TextField
                           fullWidth
-                          id='outlined-basic'
                           label='Height'
                           variant='outlined'
                           placeholder='0.00'
+                          onChange={(event) =>
+                            handleQuoteState(
+                              event.target.value,
+                              'height',
+                              count
+                            )
+                          }
+                          id='height'
+                          value={quoteItemData?.[count]?.height}
                         />
                       </Grid>
                       <Grid item xs={1}>
                         <TextField
                           fullWidth
-                          id='outlined-basic'
                           label='Unit'
                           variant='outlined'
                           placeholder='0.00'
+                          onChange={(event) =>
+                            handleQuoteState(
+                              event.target.value,
+                              'measurementUnit',
+                              count
+                            )
+                          }
+                          id='measurementUnit'
+                          value={quoteItemData?.[count]?.measurementUnit}
                         />
                       </Grid>
                       <Grid item xs={3}>
@@ -534,7 +629,11 @@ export default function ShipmentQuote() {
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position='start'>
-                                <FileUpload />
+                                <FileUpload
+                                  id='drawingFile'
+                                  index={count}
+                                  uploadFileData={uploadQuoteFileData}
+                                />
                               </InputAdornment>
                             ),
                           }}
@@ -545,6 +644,7 @@ export default function ShipmentQuote() {
                           aria-label='delete'
                           color='primary'
                           size='large'
+                          onClick={() => deleteQuotes(count)}
                         >
                           <DeleteIcon />
                         </IconButton>

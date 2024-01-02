@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import Input from '@mui/material/Input';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { Label } from '@mui/icons-material';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -15,16 +17,24 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const FileUpload = () => {
+const FileUpload = ({ id, uploadFileData, fileData }) => {
   return (
-    <Button
-      component='label'
-      variant='contained'
-      startIcon={<CloudUploadIcon />}
-    >
-      Upload file
-      <VisuallyHiddenInput type='file' />
-    </Button>
+    <>
+      <Button
+        component='label'
+        variant='contained'
+        startIcon={<CloudUploadIcon />}
+      >
+        Upload file
+        <VisuallyHiddenInput
+          type='file'
+          onChange={(event) => uploadFileData(event, id)}
+        />
+      </Button>
+      {fileData && fileData.name && (
+        <label style={{ marginLeft: 10 }}>{fileData.name}</label>
+      )}
+    </>
   );
 };
 
