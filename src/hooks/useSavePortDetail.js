@@ -8,7 +8,10 @@ const useSavePortDetail = () => {
 
   const fetchData = (portDetail) => {
     axios
-      .post('http://13.51.13.163:8080/masquote/saveQuote', portDetail)
+      .post(
+        'https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/masquote/saveQuote',
+        portDetail
+      )
       .then((res) => {
         setResponse(res.data);
       })

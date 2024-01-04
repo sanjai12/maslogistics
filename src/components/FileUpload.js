@@ -17,7 +17,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const FileUpload = ({ id, uploadFileData, fileData }) => {
+const FileUpload = ({ id, uploadFileData, fileData, index }) => {
   return (
     <>
       <Button
@@ -28,7 +28,7 @@ const FileUpload = ({ id, uploadFileData, fileData }) => {
         Upload file
         <VisuallyHiddenInput
           type='file'
-          onChange={(event) => uploadFileData(event, id)}
+          onChange={(event) => uploadFileData(event, id, index)}
         />
       </Button>
       {fileData && fileData.name && (

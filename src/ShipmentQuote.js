@@ -21,7 +21,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Grid from '@mui/material/Grid';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Box, FormControl, FormControlLabel, FormLabel } from '@mui/material';
+import {
+  Box,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  ListSubheader,
+  Snackbar,
+} from '@mui/material';
 import PortLoading from './components/PortLoading';
 
 import InputLabel from '@mui/material/InputLabel';
@@ -38,6 +45,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AirDetails from './components/AirDetails';
 import usePortDetails from './hooks/usePortDetail';
 import useSavePortDetail from './hooks/useSavePortDetail';
+import PortLoadingComponent from './components/PortLoadingComponent';
+import MuiAlert from '@mui/material/Alert';
+import {
+  companyValidation,
+  fileChecking,
+  validationSchema,
+} from './utils/savePortVaidation';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
+});
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -80,11 +98,11 @@ export default function ShipmentQuote() {
     podName: '',
     shippingDate: '',
     commodity: '',
-    dangerous: '',
+    dangerous: 'No',
     classification: '',
     unNo: '',
     msdsFile: null,
-    intoTerm: '',
+    intoTerm: 'FOB',
     intoTermAddress: '',
     totalCbm: '',
     quoteItems: [],
@@ -94,7 +112,22 @@ export default function ShipmentQuote() {
   const [showContainerType, setShowContainerType] = React.useState(false);
   const [date, setDate] = React.useState(null);
   const [containerCount, setContainerCount] = React.useState([seqNumber]);
+  const [notification, setNotification] = React.useState({
+    open: false,
+    message: '',
+  });
   const handleChange = (event, newValue) => {
+    if (newValue === 1) {
+      setPortState((oldState) => ({
+        ...oldState,
+        type: 'Air',
+      }));
+    } else {
+      setPortState((oldState) => ({
+        ...oldState,
+        type: 'Sea',
+      }));
+    }
     setValue(newValue);
   };
 
@@ -102,6 +135,7 @@ export default function ShipmentQuote() {
     let quoteItems = [...quoteItemData];
     if (!quoteItems[index]) {
       quoteItems[index] = {};
+      quoteItems[index].uniqueKey = index;
     }
     quoteItems[index][id] = value;
     setQuoteItemData(quoteItems);
@@ -117,8 +151,8 @@ export default function ShipmentQuote() {
   const loadPortDetails = (value, id, name) => {
     setPortState((oldState) => ({
       ...oldState,
-      [id]: value.id,
-      [name]: value.packingName,
+      [id]: value?.id || '',
+      [name]: value?.packingName || '',
     }));
   };
 
@@ -126,34 +160,87 @@ export default function ShipmentQuote() {
     if (!event.target.files) {
       return;
     }
-    setPortState((oldState) => ({
-      ...oldState,
-      [id]: event.target.files[0],
-    }));
+    const { validation, message } = fileChecking(event.target.files[0]);
+    if (validation) {
+      setNotification({
+        open: true,
+        message: message,
+      });
+    } else {
+      setPortState((oldState) => ({
+        ...oldState,
+        [id]: event.target.files[0],
+      }));
+    }
   };
 
   const uploadQuoteFileData = (event, id, index) => {
     if (!event.target.files) {
       return;
     }
-    let quoteItems = [...quoteItemData];
-    if (!quoteItems[index]) {
-      quoteItems[index] = {};
+    const { validation, message } = fileChecking(event.target.files[0]);
+    if (validation) {
+      setNotification({
+        open: true,
+        message: message,
+      });
+    } else {
+      let quoteItems = [...quoteItemData];
+      if (!quoteItems[index]) {
+        quoteItems[index] = {};
+        quoteItems[index].uniqueKey = index;
+      }
+      quoteItems[index][id] = event.target.files[0];
+      setQuoteItemData(quoteItems);
     }
-    quoteItems[index][id] = event.target.files[0];
-    setQuoteItemData(quoteItems);
   };
 
   const deleteQuotes = (id) => {
-    let quoteItems = [...quoteItemData].filter((value, index) => index !== id);
-    setContainerCount(containerCount.filter((d) => d !== id));
-    setQuoteItemData(quoteItems);
+    if (quoteItemData.length > 1) {
+      let quoteItems = [...quoteItemData].filter(
+        (value) => value.uniqueKey !== id
+      );
+      setContainerCount(containerCount.filter((d) => d !== id));
+      setQuoteItemData(quoteItems);
+    } else {
+      setNotification({
+        open: true,
+        message: 'Atleast one quote items should be there.',
+      });
+    }
+  };
+
+  const setPortRecord = (newValue, id) => {
+    setPortState((oldValues) => ({
+      ...oldValues,
+      [id]: newValue,
+    }));
   };
 
   const savePortRecord = async () => {
     const portData = { ...portState };
-    portData.quoteItems = quoteItemData;
-    await fetchData(portData);
+    const formData = new FormData();
+    formData.append('msdsFile', portData.msdsFile ? portData.msdsFile : null);
+    quoteItemData.forEach((data, index) => {
+      formData.append(
+        `drawingFile${index}`,
+        data?.drawingFile ? data.drawingFile : null
+      );
+    });
+    delete portData['msdsFile'];
+    let quoteItems = [...quoteItemData].map((record) => {
+      let result = { ...record };
+      delete result['drawingFile'];
+      return result;
+    });
+    portData.quoteItems = quoteItems;
+    formData.append(
+      'jsonBodyData',
+      new Blob([JSON.stringify(portData)], {
+        type: 'application/json',
+      })
+    );
+    await fetchData(formData);
   };
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -211,6 +298,7 @@ export default function ShipmentQuote() {
                       setPortState((oldValues) => ({
                         ...oldValues,
                         cargoType: event.target.value,
+                        cargoSubType: '',
                       }));
                       setShowContainerType(true);
                     }}
@@ -248,14 +336,30 @@ export default function ShipmentQuote() {
                         }}
                       >
                         <FormControlLabel
-                          value='FCL'
+                          value={
+                            portState.cargoType === 'Containerized'
+                              ? 'FCL'
+                              : 'Special'
+                          }
                           control={<Radio />}
-                          label='Special Containers'
+                          label={
+                            portState.cargoType === 'Containerized'
+                              ? 'Full Container Load [FCL]'
+                              : 'Special Containers'
+                          }
                         />
                         <FormControlLabel
-                          value='BreakBulk / RoRo'
+                          value={
+                            portState.cargoType === 'Containerized'
+                              ? 'LCL'
+                              : 'BreakBulk / RoRo'
+                          }
                           control={<Radio />}
-                          label='BreakBulk / RoRo'
+                          label={
+                            portState.cargoType === 'Containerized'
+                              ? 'Less Container Load [LCL]'
+                              : 'BreakBulk / RoRo'
+                          }
                         />
                       </RadioGroup>
                     </div>
@@ -265,21 +369,25 @@ export default function ShipmentQuote() {
                   justifyContent={'space-between'}
                   flexWrap={'nowrap'}
                   container
+                  style={{ marginTop: 5 }}
                   spacing={2}
                 >
                   <Grid item xs={3}>
                     <PortLoading
                       label='POL'
                       portRecords={response}
+                      portLabel={portState?.polName}
                       id='pol'
                       name='polName'
                       loadPortDetails={loadPortDetails}
                     />
+                    {/* <PortLoadingComponent portRecords={response} /> */}
                   </Grid>
                   <Grid item xs={3}>
                     <PortLoading
                       label='POD'
                       portRecords={response}
+                      portLabel={portState?.podName}
                       id='pod'
                       name='podName'
                       loadPortDetails={loadPortDetails}
@@ -292,12 +400,12 @@ export default function ShipmentQuote() {
                         label='Preferred Shipping Date'
                         value={date}
                         onChange={(newValue) => {
-                          setPortState((oldValues) => ({
-                            ...oldValues,
-                            shippingDate: newValue
+                          setPortRecord(
+                            newValue
                               ? dayjs(newValue).format('YYYY-MM-DD')
                               : null,
-                          }));
+                            'shippingDate'
+                          );
                           setDate(newValue);
                         }}
                       />
@@ -314,53 +422,7 @@ export default function ShipmentQuote() {
                     />
                   </Grid>
                 </Grid>
-                <Grid
-                  justifyContent={'space-between'}
-                  flexWrap={'nowrap'}
-                  container
-                  style={{ marginTop: 10 }}
-                  spacing={2}
-                >
-                  <Grid item xs={3}>
-                    <TextField
-                      fullWidth
-                      onChange={handlePortState}
-                      id='classification'
-                      value={portState.classification}
-                      label='Classification'
-                      variant='outlined'
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <TextField
-                      fullWidth
-                      onChange={handlePortState}
-                      id='unNo'
-                      value={portState.unNo}
-                      label='UN Number'
-                      variant='outlined'
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      id='outlined-basic'
-                      label='DG Decl. / MSDS / COA / Packaging Certificate if any'
-                      variant='outlined'
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position='start'>
-                            <FileUpload
-                              id='msdsFile'
-                              uploadFileData={uploadFileData}
-                              fileData={portState?.msdsFile}
-                            />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                </Grid>
+
                 <div>
                   {showContainerType && (
                     <div style={{ marginTop: 5 }}>
@@ -398,15 +460,67 @@ export default function ShipmentQuote() {
                   )}
                 </div>
                 <div>
-                  {showContainerType && (
+                  {portState?.dangerous === 'Yes' && (
                     <Grid
                       justifyContent={'space-between'}
                       flexWrap={'nowrap'}
                       container
+                      style={{ marginTop: 5 }}
+                      spacing={2}
+                    >
+                      <Grid item xs={3}>
+                        <TextField
+                          fullWidth
+                          onChange={handlePortState}
+                          id='classification'
+                          value={portState.classification}
+                          label='Classification'
+                          variant='outlined'
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <TextField
+                          fullWidth
+                          onChange={handlePortState}
+                          id='unNo'
+                          value={portState.unNo}
+                          label='UN Number'
+                          variant='outlined'
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          id='outlined-basic'
+                          label='DG Decl. / MSDS / COA / Packaging Certificate if any'
+                          variant='outlined'
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position='start'>
+                                <FileUpload
+                                  id='msdsFile'
+                                  uploadFileData={uploadFileData}
+                                  fileData={portState?.msdsFile}
+                                />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
+                  )}
+                </div>
+                <div>
+                  {showContainerType && (
+                    <Grid
+                      justifyContent={'space-between'}
+                      flexWrap={'nowrap'}
+                      style={{ marginTop: 5 }}
+                      container
                       spacing={2}
                     >
                       <Grid item xs={6}>
-                        <div style={{ marginTop: 5 }}>
+                        <div>
                           <FormLabel
                             style={{ color: '#262424de' }}
                             id='demo-row-radio-buttons-group-label'
@@ -471,8 +585,20 @@ export default function ShipmentQuote() {
                       </Grid>
                       <Grid item xs={6}>
                         <TextField
+                          style={{
+                            marginTop: 10,
+                            visibility: ['DDU', 'DDP', 'EXW', 'DAP'].includes(
+                              portState.intoTerm
+                            )
+                              ? 'visible'
+                              : 'hidden',
+                          }}
                           fullWidth
-                          label='Delivery Address'
+                          label={
+                            portState.intoTerm === 'EXW'
+                              ? 'Pickup Address'
+                              : 'Delivery Address'
+                          }
                           variant='outlined'
                           onChange={handlePortState}
                           id='intoTermAddress'
@@ -488,7 +614,7 @@ export default function ShipmentQuote() {
                     variant='contained'
                     endIcon={<AddIcon />}
                     onClick={() =>
-                      setContainerCount((value) => [...value, ...[seqNumber++]])
+                      setContainerCount((value) => [...value, ...[++seqNumber]])
                     }
                   >
                     Add New
@@ -519,7 +645,27 @@ export default function ShipmentQuote() {
                             id='containerType'
                             value={quoteItemData?.[count]?.containerType}
                           >
-                            <MenuItem value={`20' OT`}>20' OT</MenuItem>
+                            <ListSubheader>
+                              General Purpose Container
+                            </ListSubheader>
+                            <MenuItem value={'gp_20'}>20' GP</MenuItem>
+                            <MenuItem value={'hc_40'}>40' HC</MenuItem>
+                            <ListSubheader>
+                              ODD Size Container (In Gauge Only)
+                            </ListSubheader>
+                            <MenuItem value={'ot_20'}>20' OT</MenuItem>
+                            <MenuItem value={'ot_40'}>40' OT</MenuItem>
+                            <MenuItem value={'fr_20'}>20' FR</MenuItem>
+                            <MenuItem value={'fr_40'}>40' FR HC</MenuItem>
+                            <MenuItem value={'fr_col_20'}>
+                              20' FR Coll.
+                            </MenuItem>
+                            <MenuItem value={'fr_col_40'}>
+                              40' FR Coll.
+                            </MenuItem>
+                            <ListSubheader>REEFER Container</ListSubheader>
+                            <MenuItem value={'rf_20'}>20' RF</MenuItem>
+                            <MenuItem value={'rf_40'}>40' RF</MenuItem>
                           </Select>
                         </FormControl>
                       </Grid>
@@ -620,12 +766,19 @@ export default function ShipmentQuote() {
                           value={quoteItemData?.[count]?.measurementUnit}
                         />
                       </Grid>
+
                       <Grid item xs={3}>
                         <TextField
                           fullWidth
                           id='outlined-basic'
                           label='Photo/Tech Drawing'
                           variant='outlined'
+                          style={{
+                            visibility:
+                              portState.cargoType === 'Oversized'
+                                ? 'visible'
+                                : 'hidden',
+                          }}
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position='start'>
@@ -654,7 +807,16 @@ export default function ShipmentQuote() {
                 </div>
               </TabPanel>
               <TabPanel value={value} index={1}>
-                <AirDetails />
+                <AirDetails
+                  portState={portState}
+                  loadPortDetails={loadPortDetails}
+                  handlePortState={handlePortState}
+                  uploadFileData={uploadFileData}
+                  setPortRecord={setPortRecord}
+                  deleteQuotes={deleteQuotes}
+                  quoteItemData={quoteItemData}
+                  handleQuoteState={handleQuoteState}
+                />
               </TabPanel>
             </>
           )}
@@ -683,17 +845,50 @@ export default function ShipmentQuote() {
               disabled={activeStep === 2 ? true : false}
               variant='contained'
               onClick={() => {
-                if (activeStep === 1) {
-                  savePortRecord();
+                if (activeStep === 0) {
+                  const portChecking = { ...portState };
+                  portChecking.quoteItems = [...quoteItemData];
+                  const { validation, message } =
+                    validationSchema(portChecking);
+                  if (validation) {
+                    setNotification({
+                      open: true,
+                      message: message,
+                    });
+                  } else {
+                    setActiveStep((value) => value + 1);
+                  }
+                } else if (activeStep === 1) {
+                  const portChecking = { ...portState };
+                  const { validation, message } =
+                    companyValidation(portChecking);
+                  if (validation) {
+                    setNotification({
+                      open: true,
+                      message: message,
+                    });
+                  } else {
+                    savePortRecord();
+                    setActiveStep((value) => value + 1);
+                  }
                 }
-                setActiveStep((value) => value + 1);
               }}
             >
-              Next
+              {activeStep === 1 ? 'Save Port' : 'Next'}
             </Button>
           </div>
         </CardContent>
       </Card>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={notification.open}
+        autoHideDuration={4000}
+        onClose={() => setNotification({ open: false, message: '' })}
+      >
+        <Alert severity='warning' sx={{ width: '100%' }}>
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

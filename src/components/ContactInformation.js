@@ -27,9 +27,9 @@ const ContactInformation = ({ portState, handlePortState }) => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            id='name'
+            id='company'
             label='Company Name'
-            value={portState?.name}
+            value={portState?.company}
             onChange={handlePortState}
             InputProps={{
               startAdornment: (
@@ -51,10 +51,10 @@ const ContactInformation = ({ portState, handlePortState }) => {
       >
         <Grid item xs={6}>
           <TextField
-            id='company'
+            id='name'
             label='Client Name'
             fullWidth
-            value={portState?.company}
+            value={portState?.name}
             onChange={handlePortState}
             InputProps={{
               startAdornment: (
@@ -96,6 +96,7 @@ const ContactInformation = ({ portState, handlePortState }) => {
             id='email'
             label='Email Address'
             fullWidth
+            type='email'
             value={portState?.email}
             onChange={handlePortState}
             InputProps={{

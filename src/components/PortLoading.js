@@ -9,6 +9,7 @@ import { useTheme, styled } from '@mui/material/styles';
 import { VariableSizeList } from 'react-window';
 
 import Typography from '@mui/material/Typography';
+import { Input } from '@mui/material';
 
 const LISTBOX_PADDING = 8; // px
 
@@ -109,18 +110,6 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   );
 });
 
-function random(length) {
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-
-  for (let i = 0; i < length; i += 1) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-
-  return result;
-}
-
 const StyledPopper = styled(Popper)({
   [`& .${autocompleteClasses.listbox}`]: {
     boxSizing: 'border-box',
@@ -131,43 +120,72 @@ const StyledPopper = styled(Popper)({
   },
 });
 
-const PortLoading = ({ label, portRecords, loadPortDetails, id, name }) => {
+const PortLoading = ({
+  label,
+  portRecords = [],
+  portLabel = '',
+  loadPortDetails,
+  id,
+  name,
+}) => {
+  const value = portRecords.find((d) => d.label === portLabel);
+
   return (
-    <Autocomplete
-      id={id}
-      name={name}
-      options={portRecords}
-      autoHighlight
-      getOptionLabel={(option) => option.label}
-      onChange={(event, value) => loadPortDetails(value, id, name)}
-      renderOption={(props, option) => (
-        <Box
-          component='li'
-          sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-          {...props}
-        >
-          <img
-            loading='lazy'
-            width='20'
-            srcSet={`https://flagcdn.com/w40/${option.countryCode.toLowerCase()}.png 2x`}
-            src={`https://flagcdn.com/w20/${option.countryCode.toLowerCase()}.png`}
-            alt=''
-          />
-          {option.label} ({option.countryCode}) - {option.countryName}
-        </Box>
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label={label}
-          fullWidth
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: 'new-password', // disable autocomplete and autofill
+    <>
+      {portRecords.length ? (
+        <Autocomplete
+          id={id}
+          name={name}
+          options={portRecords.filter((d, i) => i < 50)}
+          autoHighlight
+          value={value}
+          filterOptions={(options, { inputValue }) => {
+            return portRecords
+              ?.filter((d) =>
+                d?.label
+                  .trim()
+                  .toLowerCase()
+                  .includes(inputValue?.trim()?.toLowerCase())
+              )
+              .filter((d, i) => i < 50);
           }}
+          getOptionLabel={(option) => option.label}
+          onChange={(event, value) => {
+            loadPortDetails(value, id, name);
+          }}
+          renderOption={(props, option) => (
+            <Box
+              component='li'
+              sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+              {...props}
+            >
+              <img
+                loading='lazy'
+                width='20'
+                srcSet={`https://flagcdn.com/w40/${option.countryCode.toLowerCase()}.png 2x`}
+                src={`https://flagcdn.com/w20/${option.countryCode.toLowerCase()}.png`}
+                alt=''
+              />
+              {option.label} ({option.countryCode}) - {option.countryName}
+            </Box>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={label}
+              fullWidth
+              required
+              inputProps={{
+                ...params.inputProps,
+                autoComplete: 'new-password', // disable autocomplete and autofill
+              }}
+            />
+          )}
         />
+      ) : (
+        <TextField fullWidth label={label} variant='outlined' />
       )}
-    />
+    </>
   );
 };
 

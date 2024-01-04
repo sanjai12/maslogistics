@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 axios.defaults.baseURL =
-  'http://13.51.13.163:8080/masquote/getPacknPortsByMode';
+  'https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/masquote/getPacknPortsByMode';
 
 const usePortDetails = (mode = '') => {
   const [response, setResponse] = useState(null);
@@ -29,12 +29,10 @@ const usePortDetails = (mode = '') => {
 
   // custom hook returns value
   return {
-    response: response?.responseData
-      .filter((d, i) => i < 500)
-      .map((portData) => ({
-        ...portData,
-        label: portData.packingName,
-      })),
+    response: response?.responseData.map((portData) => ({
+      ...portData,
+      label: portData.packingName,
+    })),
     error,
     loading,
   };

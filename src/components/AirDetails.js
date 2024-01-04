@@ -29,16 +29,23 @@ import ArticleIcon from '@mui/icons-material/Article';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
 import usePortDetails from '../hooks/usePortDetail';
 
-const AirDetails = () => {
-  const { response, loading } = usePortDetails('Air');
-  const [value, setValue] = React.useState(0);
-  const [showContainerType, setShowContainerType] = React.useState(false);
+import { packingTypes, units, incoTerms } from '../utils/DropdownJSON';
+
+let seqNumber = 0;
+
+const AirDetails = ({
+  portState,
+  loadPortDetails,
+  handlePortState,
+  uploadFileData,
+  setPortRecord,
+  deleteQuotes,
+  quoteItemData,
+  handleQuoteState,
+}) => {
+  const { response } = usePortDetails('Air');
   const [date, setDate] = React.useState(null);
-  const [containerCount, setContainerCount] = React.useState([0]);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [containerCount, setContainerCount] = React.useState([seqNumber]);
   return (
     <>
       <Grid
@@ -48,7 +55,15 @@ const AirDetails = () => {
         spacing={2}
       >
         <Grid item xs={5.8}>
-          <PortLoading label='Origin' origin={true} portRecords={response} />
+          <PortLoading
+            portLabel={portState?.polName}
+            id='pol'
+            name='polName'
+            loadPortDetails={loadPortDetails}
+            label='Origin'
+            origin={true}
+            portRecords={response}
+          />
         </Grid>
         <Grid item xs={0.6}>
           <IconButton aria-label='delete' color='primary' size='large'>
@@ -60,6 +75,10 @@ const AirDetails = () => {
             label='Destination'
             destination={true}
             portRecords={response}
+            portLabel={portState?.podName}
+            id='pod'
+            name='podName'
+            loadPortDetails={loadPortDetails}
           />
         </Grid>
       </Grid>
@@ -75,17 +94,58 @@ const AirDetails = () => {
             <DatePicker
               className='dateStyle'
               label='Preferred Shipping Date'
-              value={date}
-              onChange={(newValue) => setDate(newValue)}
+              value={
+                portState?.shippingDate ? dayjs(portState?.shippingDate) : null
+              }
+              onChange={(newValue) => {
+                setPortRecord(
+                  newValue ? dayjs(newValue).format('YYYY-MM-DD') : null,
+                  'shippingDate'
+                );
+              }}
             />
           </LocalizationProvider>
         </Grid>
         <Grid item xs={6}>
+          <FormControl fullWidth>
+            <InputLabel id='demo-simple-select-label'>Inco Term</InputLabel>
+            <Select
+              onChange={(event) => {
+                setPortRecord(event.target.value, 'intoTerm');
+              }}
+              value={portState?.intoTerm}
+              id='intoTerm'
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <ViewInArIcon />
+                  </InputAdornment>
+                ),
+              }}
+              label='Inco Term'
+            >
+              {incoTerms.map(({ label, value }) => (
+                <MenuItem value={value}>{label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+      <Grid
+        justifyContent={'space-between'}
+        flexWrap={'nowrap'}
+        container
+        style={{ marginTop: 10 }}
+        spacing={2}
+      >
+        <Grid item xs={6}>
           <TextField
             fullWidth
-            id='outlined-basic'
-            label='Inco Term'
+            label='Commodity'
             variant='outlined'
+            onChange={handlePortState}
+            value={portState?.commodity}
+            id='commodity'
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -103,34 +163,23 @@ const AirDetails = () => {
         style={{ marginTop: 10 }}
         spacing={2}
       >
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            id='outlined-basic'
-            label='Commodity'
-            variant='outlined'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <ViewInArIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Grid
-        justifyContent={'space-between'}
-        flexWrap={'nowrap'}
-        container
-        style={{ marginTop: 10 }}
-        spacing={2}
-      >
         <Grid item xs={12}>
           <FormGroup aria-label='position' row>
             <FormControlLabel
               value='top'
-              control={<Switch color='primary' />}
+              control={
+                <Switch
+                  color='primary'
+                  id='dangerous'
+                  checked={portState?.dangerous === 'No'}
+                  onChange={(event) => {
+                    setPortRecord(
+                      event.target.checked ? 'No' : 'Yes',
+                      'dangerous'
+                    );
+                  }}
+                />
+              }
               label='Is the goods are Non-DG?'
               labelPlacement='top'
             />
@@ -155,66 +204,76 @@ const AirDetails = () => {
           </FormGroup>
         </Grid>
       </Grid>
-      <Grid
-        justifyContent={'space-between'}
-        flexWrap={'nowrap'}
-        container
-        style={{ marginTop: 10 }}
-        spacing={2}
-      >
-        <Grid item xs={3}>
-          <TextField
-            fullWidth
-            id='outlined-basic'
-            label='Classification'
-            variant='outlined'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <PieChartIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+      {portState.dangerous === 'Yes' && (
+        <Grid
+          justifyContent={'space-between'}
+          flexWrap={'nowrap'}
+          container
+          style={{ marginTop: 10 }}
+          spacing={2}
+        >
+          <Grid item xs={3}>
+            <TextField
+              fullWidth
+              onChange={handlePortState}
+              value={portState?.classification}
+              id='classification'
+              label='Classification'
+              variant='outlined'
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <PieChartIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <TextField
+              fullWidth
+              onChange={handlePortState}
+              value={portState?.unNo}
+              id='unNo'
+              label='UN Number'
+              variant='outlined'
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <WarningIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              id='outlined-basic'
+              label='DG Decl. / MSDS / COA / Packaging Certificate if any'
+              variant='outlined'
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <FileUpload
+                      id='msdsFile'
+                      uploadFileData={uploadFileData}
+                      fileData={portState?.msdsFile}
+                    />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={3}>
-          <TextField
-            fullWidth
-            id='outlined-basic'
-            label='UN Number'
-            variant='outlined'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <WarningIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            id='outlined-basic'
-            label='DG Decl. / MSDS / COA / Packaging Certificate if any'
-            variant='outlined'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <FileUpload />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
+      )}
       <div>
         <Button
           style={{ marginTop: 15 }}
           variant='contained'
           endIcon={<AddIcon />}
           onClick={() =>
-            setContainerCount((value) => [...value, ...[value.length]])
+            setContainerCount((value) => [...value, ...[++seqNumber]])
           }
         >
           Add New
@@ -234,69 +293,115 @@ const AirDetails = () => {
                 </InputLabel>
                 <Select
                   labelId='demo-simple-select-label'
-                  id='demo-simple-select'
                   label='Packing Type'
+                  onChange={(event) =>
+                    handleQuoteState(event.target.value, 'packType', count)
+                  }
+                  id='packType'
+                  value={quoteItemData?.[count]?.packType}
                 >
-                  <MenuItem value={20}>20' OT</MenuItem>
+                  {packingTypes.map(({ label, value }) => (
+                    <MenuItem value={value}>{label}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={2}>
               <TextField
                 fullWidth
-                id='outlined-basic'
                 label='No. of Pkg'
                 variant='outlined'
+                onChange={(event) =>
+                  handleQuoteState(event.target.value, 'totalNoOfPkg', count)
+                }
+                id='totalNoOfPkg'
+                value={quoteItemData?.[count]?.totalNoOfPkg}
               />
             </Grid>
             <Grid item xs={2}>
               <TextField
                 fullWidth
-                id='outlined-basic'
                 label='Gross Weight(KG)'
                 variant='outlined'
                 placeholder='0.00'
+                onChange={(event) =>
+                  handleQuoteState(event.target.value, 'netWeight', count)
+                }
+                id='netWeight'
+                value={quoteItemData?.[count]?.netWeight}
               />
             </Grid>
             <Grid item xs={1}>
               <TextField
                 fullWidth
-                id='outlined-basic'
                 label='Length'
                 variant='outlined'
                 placeholder='0.00'
+                onChange={(event) =>
+                  handleQuoteState(event.target.value, 'length', count)
+                }
+                id='length'
+                value={quoteItemData?.[count]?.length}
               />
             </Grid>
             <Grid item xs={1}>
               <TextField
                 fullWidth
-                id='outlined-basic'
                 label='Width'
                 variant='outlined'
                 placeholder='0.00'
+                onChange={(event) =>
+                  handleQuoteState(event.target.value, 'width', count)
+                }
+                id='width'
+                value={quoteItemData?.[count]?.width}
               />
             </Grid>
             <Grid item xs={1}>
               <TextField
                 fullWidth
-                id='outlined-basic'
                 label='Height'
                 variant='outlined'
                 placeholder='0.00'
+                onChange={(event) =>
+                  handleQuoteState(event.target.value, 'height', count)
+                }
+                id='height'
+                value={quoteItemData?.[count]?.height}
               />
             </Grid>
             <Grid item xs={1}>
-              <TextField
-                fullWidth
-                id='outlined-basic'
-                label='Unit'
-                variant='outlined'
-                placeholder='0.00'
-              />
+              <FormControl fullWidth>
+                <InputLabel id='demo-simple-select-label'>Unit</InputLabel>
+                <Select
+                  labelId='demo-simple-select-label'
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <ViewInArIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  onChange={(event) =>
+                    handleQuoteState(
+                      event.target.value,
+                      'measurementUnit',
+                      count
+                    )
+                  }
+                  id='measurementUnit'
+                  value={quoteItemData?.[count]?.measurementUnit}
+                  label='Unit'
+                >
+                  {units.map(({ label, value }) => (
+                    <MenuItem value={value}>{label}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={1}>
               <IconButton aria-label='delete' color='primary' size='large'>
-                <DeleteIcon />
+                <DeleteIcon onClick={() => deleteQuotes(count)} />
               </IconButton>
             </Grid>
           </Grid>
