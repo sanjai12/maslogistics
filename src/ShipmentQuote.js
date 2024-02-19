@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 
 import AddIcon from '@mui/icons-material/Add';
-import shipImage from './shipment.jpg';
+import shipImage from './assets/images/shipment.jpg';
 import InputAdornment from '@mui/material/InputAdornment';
 import SailingIcon from '@mui/icons-material/Sailing';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
@@ -29,23 +29,23 @@ import {
   ListSubheader,
   Snackbar,
 } from '@mui/material';
-import PortLoading from './components/PortLoading';
+import PortLoading from './getQuote/PortLoading';
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import CustomizedSteppers from './components/Stepper';
-import ContactInformation from './components/ContactInformation';
-import QuoteCompletion from './components/QuoteCompletion';
-import FileUpload from './components/FileUpload';
+import CustomizedSteppers from './getQuote/Stepper';
+import ContactInformation from './getQuote/ContactInformation';
+import QuoteCompletion from './getQuote/QuoteCompletion';
+import FileUpload from './getQuote/FileUpload';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import AirDetails from './components/AirDetails';
-import usePortDetails from './hooks/usePortDetail';
-import useSavePortDetail from './hooks/useSavePortDetail';
-import PortLoadingComponent from './components/PortLoadingComponent';
+import AirDetails from './getQuote/AirDetails';
+import usePortDetails from './services/usePortDetail';
+import useSavePortDetail from './services/useSavePortDetail';
+import PortLoadingComponent from './getQuote/PortLoadingComponent';
 import MuiAlert from '@mui/material/Alert';
 import {
   companyValidation,
