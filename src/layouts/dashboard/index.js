@@ -34,9 +34,91 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import useGetAllQuotes from "services/useGetAllQuotes";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+  const { data } = useGetAllQuotes();
+
+  const bookingCount = data?.length || 0;
+
+  const checkDates = (date1, date2) => {
+    const year1 = date1.getFullYear();
+    const month1 = date1.getMonth();
+    const day1 = date1.getDate();
+
+    const year2 = date2.getFullYear();
+    const month2 = date2.getMonth();
+    const day2 = date2.getDate();
+
+    // Compare the date components
+    if (year1 === year2 && month1 === month2 && day1 === day2) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const todaysUser =
+    data?.filter((d) => checkDates(new Date(d.shippingDate), new Date())).length || 0;
+
+  const seaEnquiry = data?.filter((d) => d.type?.toLowerCase() === "sea").length || 0;
+
+  const airEnquiry = data?.filter((d) => d.type?.toLowerCase() === "air").length || 0;
+
+  const barChart = {
+    labels: ["Sea", "Air"],
+    datasets: { label: "Enquiry", data: [seaEnquiry, airEnquiry] },
+  };
+
+  const monthData = (month) => {
+    return data?.filter((d) => new Date(d.shippingDate).getMonth() === month)?.length || 0;
+  };
+
+  const yearData = (year = 0) => {
+    return data?.filter((d) => new Date(d.shippingDate).getFullYear() === year)?.length || 0;
+  };
+
+  const monthWise = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: {
+      label: "Month wise Enquiry",
+      data: [
+        monthData(0),
+        monthData(1),
+        monthData(2),
+        monthData(3),
+        monthData(4),
+        monthData(5),
+        monthData(6),
+        monthData(7),
+        monthData(8),
+        monthData(9),
+        monthData(10),
+        monthData(11),
+      ],
+    },
+  };
+
+  const yearWise = {
+    labels: [
+      Number(new Date()?.getFullYear()) - 2,
+      Number(new Date()?.getFullYear()) - 1,
+      Number(new Date()?.getFullYear()),
+      Number(new Date()?.getFullYear()) + 1,
+      Number(new Date()?.getFullYear()) + 2,
+    ],
+    datasets: {
+      label: "Year Wise Enquiry",
+      data: [
+        yearData(Number(new Date()?.getFullYear()) - 2),
+        yearData(Number(new Date()?.getFullYear()) - 1),
+        yearData(Number(new Date()?.getFullYear())),
+        yearData(Number(new Date()?.getFullYear()) + 1),
+        yearData(Number(new Date()?.getFullYear()) + 2),
+      ],
+    },
+  };
 
   return (
     <DashboardLayout>
@@ -49,7 +131,7 @@ function Dashboard() {
                 color="dark"
                 icon="flight_take_off"
                 title="Bookings"
-                count={281}
+                count={bookingCount}
                 percentage={{
                   color: "success",
                   amount: "+55%",
@@ -62,8 +144,8 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 icon="leaderboard"
-                title="Today's Users"
-                count="2,300"
+                title="Sea Enquiry"
+                count={seaEnquiry}
                 percentage={{
                   color: "success",
                   amount: "+3%",
@@ -77,8 +159,8 @@ function Dashboard() {
               <ComplexStatisticsCard
                 color="success"
                 icon="store"
-                title="Revenue"
-                count="34k"
+                title="Air Enquiry"
+                count={airEnquiry}
                 percentage={{
                   color: "success",
                   amount: "+1%",
@@ -93,7 +175,7 @@ function Dashboard() {
                 color="primary"
                 icon="person_add"
                 title="New Quotes"
-                count="+9"
+                count={todaysUser}
                 percentage={{
                   color: "success",
                   amount: "",
@@ -109,10 +191,10 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsBarChart
                   color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
+                  title="Enquiry views"
+                  description="Total Enquiries"
+                  date={new Date().toDateString()}
+                  chart={barChart}
                 />
               </MDBox>
             </Grid>
@@ -120,14 +202,9 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="success"
-                  title="daily sales"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) increase in today sales.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
+                  title="Monthly Enquiries"
+                  date={new Date().toDateString()}
+                  chart={monthWise}
                 />
               </MDBox>
             </Grid>
@@ -135,10 +212,10 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="dark"
-                  title="completed tasks"
+                  title="Year Wise Enquiry"
                   description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
+                  date={new Date().toDateString()}
+                  chart={yearWise}
                 />
               </MDBox>
             </Grid>
@@ -150,7 +227,7 @@ function Dashboard() {
               <Projects />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
+              <OrdersOverview sea={seaEnquiry} air={airEnquiry} total={seaEnquiry + airEnquiry} />
             </Grid>
           </Grid>
         </MDBox>

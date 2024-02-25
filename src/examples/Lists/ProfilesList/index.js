@@ -38,9 +38,6 @@ function ProfilesList({ title, profiles, shadow }) {
         <MDTypography variant="button" fontWeight="medium">
           {name}
         </MDTypography>
-        <MDTypography variant="caption" color="text">
-          {description}
-        </MDTypography>
       </MDBox>
       <MDBox ml="auto">
         {action.type === "internal" ? (

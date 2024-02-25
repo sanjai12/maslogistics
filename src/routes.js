@@ -73,7 +73,7 @@ const routes = [
     component: <Tables />,
   },
   {
-    type: "collapse",
+    type: "hidden",
     name: "Billing",
     key: "billing",
     icon: <Icon fontSize="small">receipt_long</Icon>,

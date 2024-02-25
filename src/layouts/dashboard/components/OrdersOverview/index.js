@@ -24,7 +24,12 @@ import MDTypography from "components/MDTypography";
 // Material Dashboard 2 React example components
 import TimelineItem from "examples/Timeline/TimelineItem";
 
-function OrdersOverview() {
+const OrdersOverview = ({ sea, air, total }) => {
+  const loadDate = () => {
+    const date = new Date();
+    return date.toDateString();
+  };
+
   return (
     <Card sx={{ height: "100%" }}>
       <MDBox pt={3} px={3}>
@@ -45,34 +50,35 @@ function OrdersOverview() {
         </MDBox>
       </MDBox>
       <MDBox p={2}>
-        <TimelineItem
-          color="success"
-          icon="notifications"
-          title="2.8k Goods Transported"
-          dateTime="22 DEC 7:20 PM"
-        />
+        <TimelineItem color="success" icon="notifications" title={`Goods Transported`} />
         <TimelineItem
           color="info"
           icon="flight"
-          title="1.8k Flight Bookings Done"
-          dateTime="21 DEC 9:34 PM"
+          title={`${air} Flight Bookings Done`}
+          dateTime={loadDate()}
         />
         <TimelineItem
           color="warning"
           icon="sailing"
-          title="1k Ship Port Bookings Done"
-          dateTime="20 DEC 2:20 AM"
+          title={`${sea} Ship Port Bookings Done`}
+          dateTime={loadDate()}
         />
         <TimelineItem
           color="primary"
           icon="vpn_key"
-          title="5k Quotes received this month"
-          dateTime="18 DEC 4:54 AM"
+          title={`${total} Quotes received this month`}
+          dateTime={loadDate()}
           lastItem
         />
       </MDBox>
     </Card>
   );
-}
+};
+
+OrdersOverview.propTypes = {
+  sea: Number,
+  air: Number,
+  total: Number,
+};
 
 export default OrdersOverview;

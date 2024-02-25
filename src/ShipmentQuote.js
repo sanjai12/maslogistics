@@ -248,13 +248,13 @@ export default function ShipmentQuote() {
     <>
       <Card sx={{ width: '90%', padding: 2 }}>
         <CustomizedSteppers activeStep={activeStep} />
-        <CardMedia
+        {/* <CardMedia
           style={{ marginTop: 10 }}
           component='img'
           height='194'
           image={shipImage}
           alt='Shipment Image'
-        />
+        /> */}
         <CardContent>
           {activeStep === 0 && (
             <Tabs
