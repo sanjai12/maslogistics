@@ -35,10 +35,19 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import useGetAllQuotes from "services/useGetAllQuotes";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
   const { data } = useGetAllQuotes();
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(!localStorage.getItem('username')){
+      navigate('../authentication/sign-in')
+    }
+  })
 
   const bookingCount = data?.length || 0;
 

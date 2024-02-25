@@ -97,6 +97,12 @@ const Basic = () => {
     }
   }, [loggedIn]);
 
+  useEffect(()=>{
+    if(localStorage.getItem('username')){
+      navigate('../../dashboard')
+    }
+  })
+
   useEffect(() => {
     if (error) {
       openErrorSB(error);

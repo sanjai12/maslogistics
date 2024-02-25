@@ -191,17 +191,9 @@ export default function PrimarySearchAppBar() {
               component='div'
               sx={{ display: { xs: 'none', sm: 'block', marginLeft: '25rem' } }}
             >
-              MAS LOGISTICS
+              GET QUOTE
             </Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder='Search…'
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
+            
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <IconButton
