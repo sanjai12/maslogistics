@@ -18,6 +18,8 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ShipmentQuote from './ShipmentQuote';
+import MDTypography from 'components/MDTypography';
+import { useNavigate } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -76,7 +78,7 @@ const darkTheme = createTheme({
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -171,6 +173,10 @@ export default function PrimarySearchAppBar() {
     </Menu>
   );
 
+  const navigateHandler = () => {
+    navigate('../authentication/sign-in')
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       <Box sx={{ flexGrow: 1 }}>
@@ -189,31 +195,23 @@ export default function PrimarySearchAppBar() {
               variant='h6'
               noWrap
               component='div'
-              sx={{ display: { xs: 'none', sm: 'block', marginLeft: '25rem' } }}
+              sx={{ display: { xs: 'none', sm: 'block', marginLeft: '30rem' } }}
             >
               GET QUOTE
             </Typography>
             
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <IconButton
-                size='large'
-                aria-label='show 4 new mails'
-                color='inherit'
-              >
-                <Badge badgeContent={4} color='error'>
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size='large'
-                aria-label='show 17 new notifications'
-                color='inherit'
-              >
-                <Badge badgeContent={17} color='error'>
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
+            <Typography
+              variant='h6'
+              noWrap
+              component='div'
+              onClick={navigateHandler}
+              sx={{ display: { xs: 'none', sm: 'block', marginTop:10, cursor:"pointer" } }}
+            >
+              SIGN IN
+            </Typography>
+              
               <IconButton
                 size='large'
                 edge='end'
