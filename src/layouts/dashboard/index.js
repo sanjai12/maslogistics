@@ -69,7 +69,7 @@ function Dashboard() {
   };
 
   const todaysUser =
-    data?.filter((d) => checkDates(new Date(d.shippingDate), new Date())).length || 0;
+    data?.filter((d) => checkDates(new Date(d.createdAt), new Date())).length || 0;
 
   const seaEnquiry = data?.filter((d) => d.type?.toLowerCase() === "sea").length || 0;
 
@@ -143,8 +143,8 @@ function Dashboard() {
                 count={bookingCount}
                 percentage={{
                   color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
+                  amount: "",
+                  label: "Just updated",
                 }}
               />
             </MDBox>
@@ -155,10 +155,15 @@ function Dashboard() {
                 icon="leaderboard"
                 title="Sea Enquiry"
                 count={seaEnquiry}
+                // percentage={{
+                //   color: "success",
+                //   amount: "+3%",
+                //   label: "than last month",
+                // }}
                 percentage={{
                   color: "success",
-                  amount: "+3%",
-                  label: "than last month",
+                  amount: "",
+                  label: "Just updated",
                 }}
               />
             </MDBox>
@@ -170,10 +175,15 @@ function Dashboard() {
                 icon="store"
                 title="Air Enquiry"
                 count={airEnquiry}
+                // percentage={{
+                //   color: "success",
+                //   amount: "+1%",
+                //   label: "than yesterday",
+                // }}
                 percentage={{
                   color: "success",
-                  amount: "+1%",
-                  label: "than yesterday",
+                  amount: "",
+                  label: "Just updated",
                 }}
               />
             </MDBox>
@@ -232,10 +242,10 @@ function Dashboard() {
         </MDBox>
         <MDBox>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
+            {/* <Grid item xs={12} md={6} lg={8}>
               <Projects />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            </Grid> */}
+            <Grid item xs={24} md={12} lg={12}>
               <OrdersOverview sea={seaEnquiry} air={airEnquiry} total={seaEnquiry + airEnquiry} />
             </Grid>
           </Grid>
