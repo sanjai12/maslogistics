@@ -60,7 +60,7 @@ function Tables() {
                 <DataTable
                   table={{
                     columns: tableData.column,
-                    rows: data ? loadRows(data.filter((d) => d.type !== "sea")) : [],
+                    rows: data ? loadRows(data.filter((d) => d.type.toLowerCase() == "air")) : [],
                   }}
                   isSorted={false}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
@@ -98,7 +98,7 @@ function Tables() {
                 <DataTable
                   table={{
                     columns: tableData.column,
-                    rows: data ? loadRows(data.filter((d) => d.type === "sea")) : [],
+                    rows: data ? loadRows(data.filter((d) => d.type.toLowerCase() === "sea")) : [],
                   }}
                   isSorted={false}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
