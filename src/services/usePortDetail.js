@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 axios.defaults.baseURL =
-  'https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/masquote/getPacknPortsByMode';
+  'https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/api/getPacknPortsByMode';
 
 const usePortDetails = (mode = '') => {
   const [response, setResponse] = useState(null);
