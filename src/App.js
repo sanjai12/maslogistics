@@ -111,8 +111,16 @@ export default function App() {
 
   const isGetQuote = pathname === '/getQuote';
 
-  const getRoutes = (allRoutes) =>
-    allRoutes.map((route) => {
+  const getRoutes = (allRoutes) =>{
+  let routings=[];
+  const role=localStorage.getItem('role');
+  if( role && role.includes('ROLE_USER')){
+    const allowedRoutes = ["Get Quote","Quotes","Sign In","Sign Up"];
+    routings=allRoutes.filter(route=>allowedRoutes.includes(route.name));
+  }else{
+    routings=allRoutes;
+  }
+    return routings.map((route) => {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
@@ -123,6 +131,7 @@ export default function App() {
 
       return null;
     });
+  }
 
   const configsButton = (
     <MDBox

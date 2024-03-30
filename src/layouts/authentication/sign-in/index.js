@@ -91,15 +91,24 @@ const Basic = () => {
     }
   };
 
+  const checkRole = () => {
+    const role = localStorage.getItem('role');
+    if(role.includes('ROLE_USER')){
+      navigate("../../quotes");
+    }else{
+      navigate("../../dashboard");
+    }
+  }
+
   useEffect(() => {
     if (loggedIn) {
-      navigate("../../dashboard");
+      checkRole();
     }
   }, [loggedIn]);
 
   useEffect(()=>{
     if(localStorage.getItem('username')){
-      navigate('../../dashboard')
+      checkRole();
     }
   })
 

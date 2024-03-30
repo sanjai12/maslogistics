@@ -10,7 +10,12 @@ const useSavePortDetail = () => {
     axios
       .post(
         'https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/masquote/saveQuote',
-        portDetail
+        portDetail,{
+          auth: {
+            username: "sanjai",
+            password: "sanjai",
+          },
+        }
       )
       .then((res) => {
         setResponse(res.data);

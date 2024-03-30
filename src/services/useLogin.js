@@ -19,8 +19,7 @@ const useLogin = () => {
       const token = response.data;
       localStorage.setItem("username", username);
       localStorage.setItem("userkey", password);
-      // Do something with the token, such as storing it in local storage or context
-      localStorage.setItem("token", token);
+      localStorage.setItem('role',token.role);
       setLoggedIn(true);
     } catch (error) {
       setError("Authentication Failed : Username or Password is not correct");

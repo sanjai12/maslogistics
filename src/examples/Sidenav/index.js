@@ -83,8 +83,20 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
+  const loadRoutings = (routes) => {
+    let routings=[];
+  const role=localStorage.getItem('role');
+  if( role && role.includes('ROLE_USER')){
+    const allowedRoutes = ["Get Quote","Quotes","Sign In","Sign Up"];
+    routings=routes.filter(route=>allowedRoutes.includes(route.name));
+  }else{
+    routings=routes;
+  }
+  return routings;
+  }
+
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
+  const renderRoutes = loadRoutings(routes).map(({ type, name, icon, title, noCollapse, key, href, route }) => {
     let returnValue;
 
     if (type === "collapse") {

@@ -34,6 +34,12 @@ import { loadRows, tableData } from "./data/authorsTableData";
 
 function Tables() {
   const { data } = useGetAllQuotes();
+  let portData = [];
+  if(localStorage.getItem('role') && localStorage.getItem('role').includes('ROLE_USER')){
+    portData = data?.filter(portRecord=>portRecord.name?.toLowerCase()===localStorage.getItem('username')?.toLowerCase());
+  }else{
+    portData= data;
+  }
 
   return (
     <DashboardLayout>
@@ -60,7 +66,7 @@ function Tables() {
                 <DataTable
                   table={{
                     columns: tableData.column,
-                    rows: data ? loadRows(data.filter((d) => d.type.toLowerCase() == "air")) : [],
+                    rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() == "air")) : [],
                   }}
                   isSorted={false}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
@@ -98,7 +104,7 @@ function Tables() {
                 <DataTable
                   table={{
                     columns: tableData.column,
-                    rows: data ? loadRows(data.filter((d) => d.type.toLowerCase() === "sea")) : [],
+                    rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() === "sea")) : [],
                   }}
                   isSorted={false}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
