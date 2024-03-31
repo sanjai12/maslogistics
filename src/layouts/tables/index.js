@@ -35,7 +35,7 @@ import { loadRows, tableData } from "./data/authorsTableData";
 function Tables() {
   const { data } = useGetAllQuotes();
   let portData = [];
-  if(localStorage.getItem('role') && localStorage.getItem('role').includes('ROLE_USER')){
+  if(localStorage.getItem('role') && localStorage.getItem('role')?.includes('ROLE_USER')){
     portData = data?.filter(portRecord=>portRecord.name?.toLowerCase()===localStorage.getItem('username')?.toLowerCase());
   }else{
     portData= data;

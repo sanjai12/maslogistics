@@ -148,7 +148,7 @@ export default function data(record) {
       ),
       action: (
         <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-          <Icon>view</Icon>
+          <Icon onClick={()=>alert("open dialog")}>view</Icon>
         </MDTypography>
       ),
     }));
@@ -444,7 +444,7 @@ export const loadRows = (record = []) => {
     ),
     action: (
       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        <Icon>visibility</Icon>
+        <Icon onClick={()=>alert("alert")}>visibility</Icon>
       </MDTypography>
     ),
   }));

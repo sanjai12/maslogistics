@@ -86,9 +86,9 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const loadRoutings = (routes) => {
     let routings=[];
   const role=localStorage.getItem('role');
-  if( role && role.includes('ROLE_USER')){
+  if( role && role?.includes('ROLE_USER')){
     const allowedRoutes = ["Get Quote","Quotes","Sign In","Sign Up"];
-    routings=routes.filter(route=>allowedRoutes.includes(route.name));
+    routings=routes.filter(route=>allowedRoutes?.includes(route.name));
   }else{
     routings=routes;
   }
