@@ -39,6 +39,7 @@ Coded by www.creative-tim.com
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
+import QuoteDetail from 'layouts/quoteDetails';
 import Ports from "layouts/ports";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
@@ -80,6 +81,14 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/billing",
     component: <Billing />,
+  },
+  {
+    type: "hidden",
+    name: "Quote Detail",
+    key: "quoteDetail",
+    icon: <Icon fontSize="small">receipt_long</Icon>,
+    route: "/quoteDetail",
+    component: <QuoteDetail />,
   },
   {
     type: "collapse",

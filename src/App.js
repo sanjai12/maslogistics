@@ -115,7 +115,7 @@ export default function App() {
   let routings=[];
   const role=localStorage.getItem('role');
   if( role && role?.includes('ROLE_USER')){
-    const allowedRoutes = ["Get Quote","Quotes","Sign In","Sign Up"];
+    const allowedRoutes = ["Get Quote","Quotes","Sign In","Sign Up",'Quote Detail'];
     routings=allRoutes.filter(route=>allowedRoutes?.includes(route.name));
   }else{
     routings=allRoutes;

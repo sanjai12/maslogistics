@@ -41,9 +41,13 @@ import {
 } from "@mui/material";
 // import PDFComponent from "../PDFViewer";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 // import MDAlertCloseIcon from "components/MDAlert/MDAlertCloseIcon";
 
-export default function data(record) {
+export default function Data(record) {
+
+  const navigate = useNavigate();
+
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" />
@@ -56,18 +60,6 @@ export default function data(record) {
     </MDBox>
   );
 
-  const Job = ({ title, description }) => (
-    <MDBox lineHeight={1} textAlign="left">
-      <MDTypography display="block" variant="caption" color="text" fontWeight="medium">
-        {title}
-      </MDTypography>
-      <MDTypography variant="caption">{description}</MDTypography>
-    </MDBox>
-  );
-
-  const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
 
   // const dialog = () => (
   //   <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -154,6 +146,11 @@ export default function data(record) {
     }));
   };
 
+  const callback=(data)=>{
+    navigate('../quoteDetail');
+  }
+
+
   return {
     columns: [
       { Header: "Company", accessor: "company", align: "left" },
@@ -167,210 +164,7 @@ export default function data(record) {
       { Header: "Destination", accessor: "podName", align: "center" },
       { Header: "action", accessor: "action", align: "center" },
     ],
-    rowData: loadRows(record),
-
-    // rows: [
-    //   {
-    //     company: <Author image={team2} name="John Michael" email="john@maslogistics.com" />,
-    //     function: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="InBound" color="success" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     status: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     employed: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         23/04/18
-    //       </MDTypography>
-    //     ),
-    //     origin: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Chennai
-    //       </MDTypography>
-    //     ),
-    //     destination: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Colombo
-    //       </MDTypography>
-    //     ),
-    //     action: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         <Icon onClick={handleClickOpen}>download</Icon>
-    //         {dialog()}
-    //       </MDTypography>
-    //     ),
-    //   },
-    //   {
-    //     company: <Author image={team3} name="Alexa Liras" email="alexa@maslogistics.com" />,
-    //     function: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="InBound" color="success" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     status: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     employed: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         11/01/19
-    //       </MDTypography>
-    //     ),
-    //     origin: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Chennai
-    //       </MDTypography>
-    //     ),
-    //     destination: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Durban
-    //       </MDTypography>
-    //     ),
-    //     action: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         <Icon onClick={handleClickOpen}>download</Icon>
-    //       </MDTypography>
-    //     ),
-    //   },
-    //   {
-    //     company: <Author image={team4} name="Laurent Perrier" email="laurent@maslogistics.com" />,
-    //     function: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="OutBound" color="warning" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     status: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     employed: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         19/09/17
-    //       </MDTypography>
-    //     ),
-    //     origin: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Chennai
-    //       </MDTypography>
-    //     ),
-    //     destination: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Sydney
-    //       </MDTypography>
-    //     ),
-    //     action: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         <Icon onClick={() => alert()}>download</Icon>
-    //       </MDTypography>
-    //     ),
-    //   },
-    //   {
-    //     company: <Author image={team3} name="Michael Levi" email="michael@maslogistics.com" />,
-    //     function: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="OutBound" color="warning" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     status: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     employed: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         24/12/08
-    //       </MDTypography>
-    //     ),
-    //     origin: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Chennai
-    //       </MDTypography>
-    //     ),
-    //     destination: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Alaska
-    //       </MDTypography>
-    //     ),
-    //     action: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         <Icon onClick={() => alert()}>download</Icon>
-    //       </MDTypography>
-    //     ),
-    //   },
-    //   {
-    //     company: <Author image={team3} name="Richard Gran" email="richard@maslogistics.com" />,
-    //     function: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="OutBound" color="warning" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     status: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     employed: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         04/10/21
-    //       </MDTypography>
-    //     ),
-    //     origin: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Mumbai
-    //       </MDTypography>
-    //     ),
-    //     destination: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Red Sea
-    //       </MDTypography>
-    //     ),
-    //     action: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         <Icon onClick={() => alert()}>download</Icon>
-    //       </MDTypography>
-    //     ),
-    //   },
-    //   {
-    //     company: <Author image={team4} name="Miriam Eric" email="miriam@maslogistics.com" />,
-    //     function: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="OutBound" color="warning" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     status: (
-    //       <MDBox ml={-1}>
-    //         <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-    //       </MDBox>
-    //     ),
-    //     employed: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         14/09/20
-    //       </MDTypography>
-    //     ),
-    //     origin: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Mumbai
-    //       </MDTypography>
-    //     ),
-    //     destination: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         Colombo
-    //       </MDTypography>
-    //     ),
-    //     action: (
-    //       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-    //         {/* <Icon>more_vert</Icon> */}
-    //         <Icon onClick={() => alert()}>download</Icon>
-    //       </MDTypography>
-    //     ),
-    //   },
-    // ],
+    rowData: loadRows(record,callback),
   };
 }
 
@@ -395,7 +189,7 @@ export const Author = ({ image, name, email }) => (
   </MDBox>
 );
 
-export const loadRows = (record = []) => {
+export const loadRows = (record = [],callback) => {
   return record?.map((data) => ({
     company: <Author image={team2} name={data?.company} email={data?.email} />,
     type: (
@@ -444,7 +238,7 @@ export const loadRows = (record = []) => {
     ),
     action: (
       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        <Icon onClick={()=>alert("alert")}>visibility</Icon>
+        <Icon onClick={()=>callback(data)}>visibility</Icon>
       </MDTypography>
     ),
   }));

@@ -1,5 +1,7 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import MDTypography from "components/MDTypography";
+import MDBox from "components/MDBox";
 
 const styles = StyleSheet.create({
   page: {
@@ -15,12 +17,30 @@ const styles = StyleSheet.create({
   },
 });
 
-const PDFComponent = () => (
+const PDFComponent = ({data}) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View>
-        <Text style={styles.text}>Name: {"Suresh"}</Text>
-        <Text style={styles.text}>Email: {"Suresh@asdasd.com"}</Text>
+      <div style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  {Object.keys(data).filter((d, i) => d !== "quoteItems" && i <= 8).map(fields =>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+                      <Text style={styles.text}>{`${fields} : ${data[fields]}`}</Text>
+                    </div>)}
+                </div>
+                <div>
+                  {Object.keys(data).filter((d, i) => d !== "quoteItems" && i >= 9 && i <= 16).map(fields =>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+                      <Text style={styles.text}>{`${fields} : ${data[fields]}`}</Text>
+                    </div>)}
+                </div>
+                <div>
+                  {Object.keys(data).filter((d, i) => d !== "quoteItems" && i >= 17).map(fields =>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+                      <Text style={styles.text}>{`${fields} : ${data[fields]}`}</Text>
+                    </div>)}
+                </div>
+              </div>
       </View>
     </Page>
   </Document>

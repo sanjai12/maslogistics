@@ -31,9 +31,14 @@ import DataTable from "examples/Tables/DataTable";
 import authorsTableData from "layouts/tables/data/authorsTableData";
 import useGetAllQuotes from "services/useGetAllQuotes";
 import { loadRows, tableData } from "./data/authorsTableData";
+import { useNavigate } from "react-router-dom";
+import QuoteDetail from "layouts/quoteDetails";
+import { useState } from "react";
 
 function Tables() {
   const { data } = useGetAllQuotes();
+  const [showDetail,setShowDetail] = useState(false);
+  const [detail,setDetail] = useState(null);
   let portData = [];
   if(localStorage.getItem('role') && localStorage.getItem('role')?.includes('ROLE_USER')){
     portData = data?.filter(portRecord=>portRecord.name?.toLowerCase()===localStorage.getItem('username')?.toLowerCase());
@@ -41,8 +46,22 @@ function Tables() {
     portData= data;
   }
 
+  // const navigate = useNavigate();
+
+  const callback=(data)=>{
+    setShowDetail(true);
+    setDetail(data);
+  }
+
+  const onBack = () => {
+    setShowDetail(false);
+    setDetail(null);
+  }
+
   return (
-    <DashboardLayout>
+    <>
+    {showDetail && <QuoteDetail data={detail} onBack={onBack}/>}
+    {!showDetail && <DashboardLayout>
       <DashboardNavbar />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
@@ -66,7 +85,7 @@ function Tables() {
                 <DataTable
                   table={{
                     columns: tableData.column,
-                    rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() == "air")) : [],
+                    rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() == "air"),callback) : [],
                   }}
                   isSorted={false}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
@@ -104,7 +123,7 @@ function Tables() {
                 <DataTable
                   table={{
                     columns: tableData.column,
-                    rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() === "sea")) : [],
+                    rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() === "sea"),callback) : [],
                   }}
                   isSorted={false}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
@@ -119,6 +138,8 @@ function Tables() {
       </MDBox>
       <Footer />
     </DashboardLayout>
+}
+    </>
   );
 }
 
