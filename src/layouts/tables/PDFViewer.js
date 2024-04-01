@@ -24,20 +24,20 @@ const PDFComponent = ({data}) => (
       <div style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
                 <div>
                   {Object.keys(data).filter((d, i) => d !== "quoteItems" && i <= 8).map(fields =>
-                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
-                      <Text style={styles.text}>{`${fields} : ${data[fields]}`}</Text>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20 }}>
+                      <Text style={styles.text}>{`${fields?.toString()?.toUpperCase()} : ${data[fields] || ''?.toString()?.toUpperCase()}`}</Text>
                     </div>)}
                 </div>
                 <div>
                   {Object.keys(data).filter((d, i) => d !== "quoteItems" && i >= 9 && i <= 16).map(fields =>
-                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
-                      <Text style={styles.text}>{`${fields} : ${data[fields]}`}</Text>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20 }}>
+                      <Text style={styles.text}>{`${fields?.toString()?.toUpperCase()} : ${data[fields] || ''?.toString()?.toUpperCase()}`}</Text>
                     </div>)}
                 </div>
                 <div>
                   {Object.keys(data).filter((d, i) => d !== "quoteItems" && i >= 17).map(fields =>
-                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
-                      <Text style={styles.text}>{`${fields} : ${data[fields]}`}</Text>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 20 }}>
+                      <Text style={styles.text}>{`${fields?.toString()?.toUpperCase()} : ${data[fields] || ''?.toString()?.toUpperCase()}`}</Text>
                     </div>)}
                 </div>
               </div>
