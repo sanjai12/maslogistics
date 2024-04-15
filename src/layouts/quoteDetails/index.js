@@ -31,13 +31,22 @@ import { AppBar, Button, Dialog, IconButton, Toolbar, Typography } from "@mui/ma
 import MDAlertCloseIcon from "components/MDAlert/MDAlertCloseIcon";
 import { PDFViewer } from "@react-pdf/renderer";
 import PDFComponent from "layouts/tables/PDFViewer";
+import React, { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 
 const QuoteDetail = ({ data, onBack }) => {
 const [open,setOpen] = useState(false);
+const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
 
 const handleClose = () => {
   setOpen(false);
 }
+
+
 
   return (
     <DashboardLayout>
@@ -60,7 +69,18 @@ const handleClose = () => {
         <PDFComponent data={data}/>
       </PDFViewer>
     </Dialog>
-      <MDBox pt={6} pb={3}>
+      <ComponentToPrint data={data} onBack={onBack} handlePrint={handlePrint} ref={componentRef} />
+      <Footer />
+    </DashboardLayout>
+  );
+}
+
+export class ComponentToPrint extends React.PureComponent {
+
+  render(){
+    const {data,onBack,handlePrint} = this.props;
+    return (
+    <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
@@ -126,16 +146,15 @@ const handleClose = () => {
                     </div>)}
                 </div>
               </MDBox>
-              <MDButton onClick={()=>setOpen(true)} style={{margin:25}} variant="gradient" color="info">
+              <MDButton onClick={handlePrint} style={{margin:25}} variant="gradient" color="info">
                 Download PDF
               </MDButton>
             </Card>
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
-    </DashboardLayout>
-  );
+    )
+  }
 }
 
 export default QuoteDetail;
