@@ -139,9 +139,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
               <MDInput label="Search here" />
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
-                  <Icon sx={iconsStyle}>account_circle</Icon>
+              <Link to="/getQuote">
+                <IconButton sx={navbarIconButton} size="small" style={darkMode?{fontSize:12,color:"#fff"}:{fontSize:12}} disableRipple>
+                  <Icon sx={iconsStyle}>file_open</Icon>
+                  &nbsp;Get Quote
                 </IconButton>
               </Link>
               <IconButton

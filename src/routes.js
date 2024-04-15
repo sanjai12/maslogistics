@@ -49,6 +49,7 @@ import SignUp from "layouts/authentication/sign-up";
 import GetQuote from './GetQuote';
 // @mui icons
 import Icon from "@mui/material/Icon";
+import InfoScreen from "infoScreen";
 
 const routes = [
   {
@@ -56,7 +57,7 @@ const routes = [
     name:"Get Quote",
     key:"getQuote",
     route:"/getQuote",
-    component:<GetQuote/>
+    component:<InfoScreen/>
   },
   {
     type: "collapse",

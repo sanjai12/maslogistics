@@ -178,9 +178,10 @@ const navigate = useNavigate();
   }
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position='static'>
+    <div style={{minWidth:"100%",maxWidth:"100%",position:"absolute",top:"15%",left:"-2%"}}>
+    <ThemeProvider theme={darkTheme} >
+      <Box sx={{ flexGrow: 1,width:"100%" }}>
+        {/* <AppBar position='static'>
           <Toolbar>
             <IconButton
               size='large'
@@ -237,7 +238,7 @@ const navigate = useNavigate();
               </IconButton>
             </Box>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
         {renderMobileMenu}
         {renderMenu}
       </Box>
@@ -247,10 +248,12 @@ const navigate = useNavigate();
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          width:"100%"
         }}
       >
         <ShipmentQuote />
       </div>
     </ThemeProvider>
+    </div>
   );
 }

@@ -87,7 +87,7 @@ function Tables() {
                     columns: tableData.column,
                     rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() == "air"),callback) : [],
                   }}
-                  isSorted={false}
+                  isSorted={true}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
                   showTotalEntries={true}
                   noEndBorder
@@ -125,7 +125,7 @@ function Tables() {
                     columns: tableData.column,
                     rows: portData ? loadRows(portData.filter((d) => d.type.toLowerCase() === "sea"),callback) : [],
                   }}
-                  isSorted={false}
+                  isSorted={true}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
                   showTotalEntries={true}
                   noEndBorder

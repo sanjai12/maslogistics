@@ -397,6 +397,7 @@ export default function ShipmentQuote() {
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         className='dateStyle'
+                        style={{minWidth:"100%"}}
                         label='Preferred Shipping Date'
                         value={date}
                         onChange={(newValue) => {

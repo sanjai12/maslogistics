@@ -112,7 +112,7 @@ function Ports() {
                     columns: tableData.column,
                     rows: airResponse ? loadRows(airResponse) : [],
                   }}
-                  isSorted={false}
+                  isSorted={true}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
                   showTotalEntries={true}
                   noEndBorder
@@ -150,7 +150,7 @@ function Ports() {
                     columns: tableData.column,
                     rows: seaResponse ? loadRows(seaResponse) : [],
                   }}
-                  isSorted={false}
+                  isSorted={true}
                   entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
                   showTotalEntries={true}
                   noEndBorder
