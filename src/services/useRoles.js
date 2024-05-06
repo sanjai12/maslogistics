@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const useGetAllQuotes = () => {
+const useRoles = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +10,7 @@ const useGetAllQuotes = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/masquote/getAllQuotes",
+          "https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/admin/getAllUsers",
           {
             auth: { 
               username: localStorage.getItem("username"),
@@ -32,4 +32,4 @@ const useGetAllQuotes = () => {
   return { data, loading, error };
 };
 
-export default useGetAllQuotes;
+export default useRoles;

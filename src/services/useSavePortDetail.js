@@ -9,13 +9,8 @@ const useSavePortDetail = () => {
   const fetchData = (portDetail) => {
     axios
       .post(
-        'https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/masquote/saveQuote',
-        portDetail,{
-          auth: {
-            username: "sanjai",
-            password: "sanjai",
-          },
-        }
+        'https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/api/saveQuote',
+        portDetail
       )
       .then((res) => {
         setResponse(res.data);
