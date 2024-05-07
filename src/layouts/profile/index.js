@@ -53,8 +53,8 @@ import team4 from "assets/images/team-4.jpg";
 import useRoles from "services/useRoles";
 
 function Overview() {
-  const {data,loading} = useRoles();
-  console.log(data);
+  
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -101,7 +101,7 @@ function Overview() {
               <Divider orientation="vertical" sx={{ mx: 0 }} />
             </Grid>
             <Grid item xs={12} xl={4}>
-              <ProfilesList title="User Roles" profiles={profilesListData} shadow={false} />
+              <ProfilesList title="User Roles" shadow={false} />
             </Grid>
           </Grid>
         </MDBox>

@@ -13,7 +13,13 @@ const useChangeRole = () => {
     try {
       const response = await axios.post(
         "https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/admin/changeRole",
-        userData
+        userData,
+        {
+          auth: { 
+            username: localStorage.getItem("username"),
+            password: localStorage.getItem("userkey"),
+          },
+        }
       );
       const token = response.data;
       setRoleChanged(true);

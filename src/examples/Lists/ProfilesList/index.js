@@ -29,10 +29,31 @@ import MDAvatar from "components/MDAvatar";
 import MDButton from "components/MDButton";
 import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useRoles from "services/useRoles";
+import useChangeRole from "services/useChangeRole";
+import MDSnackbar from "components/MDSnackbar";
 
-const ProfilesList=({ title, profiles, shadow })=> {
-  const [profileData,setProfileData] = useState(profiles || []);
+const ProfilesList=({ title, shadow })=> {
+  const {data} = useRoles();
+  const {roleChanged,changeRole} = useChangeRole();
+
+  const loadProfileRoles = (record) => {
+    return record?.map(data=>({...data,role:data.role==="[ROLE_ADMIN]"?"ADMIN":"USER"}))
+  }
+
+  const [profileData,setProfileData] = useState([]);
+  const [successSB, setSuccessSB] = useState(false);
+
+  useEffect(()=>{
+    if(data && data.length){
+      setProfileData(loadProfileRoles(data));
+    }
+
+  },[data])
+
+  const openSuccessSB = () => setSuccessSB(true);
+  const closeSuccessSB = () => setSuccessSB(false);
 
   const handleProfileEdit = (index) => {
     let profileEditOption = [...profileData];
@@ -40,28 +61,48 @@ const ProfilesList=({ title, profiles, shadow })=> {
     setProfileData(profileEditOption)
   }
 
-  const handleProfileRoles = (index,value) => {
+  const handleProfileRoles = async (index,value) => {
     let profileEditOption = [...profileData];
+    let userData = {
+      username:profileEditOption[index].username,
+      role:value==="USER"?"ROLE_USER":"ROLE_ADMIN",
+    }
+    await changeRole(userData);
+    openSuccessSB();
     profileEditOption[index].edit = false;
-    profileEditOption[index].action.label = value;
+    profileEditOption[index].role = value;
     setProfileData(profileEditOption)
   }
 
-  const renderProfiles = (profileRecord=[]) => profileRecord?.map(({ image, name, action },index) => (
-    <MDBox key={name} component="li" display="flex" alignItems="center" py={1} mb={1}>
+  const renderSuccessSB = (
+    <MDSnackbar
+      color="success"
+      icon="check"
+      title="Success"
+      content="Profile Changed successfully."
+      dateTime="just now"
+      open={successSB}
+      onClose={closeSuccessSB}
+      close={closeSuccessSB}
+      bgWhite
+    />
+  );
+
+  const renderProfiles = (profileRecord=[]) => profileRecord?.map(({ username, role, edit },index) => (
+    <MDBox key={username} component="li" display="flex" alignItems="center" py={1} mb={1}>
       <MDBox mr={2}>
-        <MDAvatar src={image} alt="something here" shadow="md" />
+        <MDAvatar  alt="something here" shadow="md" />
       </MDBox>
       <MDBox display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center">
         <MDTypography variant="button" fontWeight="medium">
-          {name}
+          {username}
         </MDTypography>
       </MDBox>
       <MDBox ml="auto">
-        {!profileData[index]?.edit ? (
+        {!edit ? (
           <>
             <MDButton variant="text" color="info">
-              {action.label}
+              {role}
             </MDButton>
             <Tooltip title="Edit Profile" placement="top">
               <Icon sx={{ cursor: "pointer" }} fontSize="small" onClick={()=>handleProfileEdit(index)}>
@@ -95,6 +136,7 @@ const ProfilesList=({ title, profiles, shadow })=> {
           {renderProfiles(profileData)}
         </MDBox>
       </MDBox>
+      {renderSuccessSB}
     </Card>
   );
 }
@@ -107,7 +149,6 @@ ProfilesList.defaultProps = {
 // Typechecking props for the ProfilesList
 ProfilesList.propTypes = {
   title: PropTypes.string.isRequired,
-  profiles: PropTypes.arrayOf(PropTypes.object).isRequired,
   shadow: PropTypes.bool,
 };
 
