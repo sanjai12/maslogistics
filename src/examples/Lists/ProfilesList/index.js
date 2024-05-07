@@ -35,44 +35,56 @@ import useChangeRole from "services/useChangeRole";
 import MDSnackbar from "components/MDSnackbar";
 import MDInput from "components/MDInput";
 
-const ProfilesList=({ title, shadow })=> {
-  const {data} = useRoles();
-  const {roleChanged,changeRole} = useChangeRole();
+const ProfilesList = ({ title, shadow }) => {
+  const { data } = useRoles();
+  const { changeRole } = useChangeRole();
 
   const loadProfileRoles = (record) => {
-    return record?.map(data=>({...data,role:data.role==="[ROLE_ADMIN]"?"ADMIN":"USER"}))
+    return record?.map(data => ({ ...data, role: data.role === "[ROLE_ADMIN]" ? "ADMIN" : "USER" }))
   }
 
-  const [profileData,setProfileData] = useState([]);
+  const [profileData, setProfileData] = useState([]);
   const [successSB, setSuccessSB] = useState(false);
+  const [profileInput, setProfileInput] = useState('');
+  const [filteredProfileData,setFilteredProfileData] = useState([]);
 
-  useEffect(()=>{
-    if(data && data.length){
+  useEffect(() => {
+    if (data && data.length) {
       setProfileData(loadProfileRoles(data));
     }
-
-  },[data])
+  }, [data])
 
   const openSuccessSB = () => setSuccessSB(true);
   const closeSuccessSB = () => setSuccessSB(false);
 
   const handleProfileEdit = (index) => {
-    let profileEditOption = [...profileData];
+    let profileEditOption = [...filteredProfileData];
     profileEditOption[index].edit = true;
-    setProfileData(profileEditOption)
+    setFilteredProfileData(profileEditOption)
   }
 
-  const handleProfileRoles = async (index,value) => {
-    let profileEditOption = [...profileData];
+  const handleSearchData = (value) => {
+    setProfileInput(value)
+    setFilteredProfileData(value?[...profileData].filter(data=>data.username.includes(value)):[]);
+  }
+
+  const handleProfileRoles = async (index, value) => {
+    let profileEditOption = [...filteredProfileData];
     let userData = {
-      username:profileEditOption[index].username,
-      role:value==="USER"?"ROLE_USER":"ROLE_ADMIN",
+      username: profileEditOption[index].username,
+      role: value === "USER" ? "ROLE_USER" : "ROLE_ADMIN",
     }
     await changeRole(userData);
     openSuccessSB();
     profileEditOption[index].edit = false;
     profileEditOption[index].role = value;
-    setProfileData(profileEditOption)
+    const oldProfileDataIndex = profileData.findIndex(({username})=>username===userData.username);
+    if(oldProfileDataIndex){
+      const oldProfileData = [...profileData];
+      oldProfileData[oldProfileDataIndex].role = value;
+      setProfileData(oldProfileData);
+    }
+    setFilteredProfileData(profileEditOption)
   }
 
   const renderSuccessSB = (
@@ -89,10 +101,10 @@ const ProfilesList=({ title, shadow })=> {
     />
   );
 
-  const renderProfiles = (profileRecord=[]) => profileRecord?.map(({ username, role, edit },index) => (
+  const renderProfiles = (profileRecord = []) => profileRecord?.map(({ username, role, edit }, index) => (
     <MDBox key={username} component="li" display="flex" alignItems="center" py={1} mb={1}>
       <MDBox mr={2}>
-        <MDAvatar  alt="something here" shadow="md" />
+        <MDAvatar alt="something here" shadow="md" />
       </MDBox>
       <MDBox display="flex" flexDirection="column" alignItems="flex-start" justifyContent="center">
         <MDTypography variant="button" fontWeight="medium">
@@ -106,17 +118,17 @@ const ProfilesList=({ title, shadow })=> {
               {role}
             </MDButton>
             <Tooltip title="Edit Profile" placement="top">
-              <Icon sx={{ cursor: "pointer" }} fontSize="small" onClick={()=>handleProfileEdit(index)}>
+              <Icon sx={{ cursor: "pointer" }} fontSize="small" onClick={() => handleProfileEdit(index)}>
                 edit
               </Icon>
             </Tooltip>
           </>
         ) : (
           <div>
-            <MDButton variant="text" color="info" onClick={()=>handleProfileRoles(index,'USER')}>
+            <MDButton variant="text" color="info" onClick={() => handleProfileRoles(index, 'USER')}>
               USER
             </MDButton>
-            <MDButton variant="text" color="info" onClick={()=>handleProfileRoles(index,'ADMIN')}>
+            <MDButton variant="text" color="info" onClick={() => handleProfileRoles(index, 'ADMIN')}>
               ADMIN
             </MDButton>
           </div>
@@ -132,13 +144,13 @@ const ProfilesList=({ title, shadow })=> {
           {title}
         </MDTypography>
       </MDBox>
-      <br/>
-      <MDBox pr={2}>
-              <MDInput label="Search here" />
+      <MDBox pt={2} px={2}>
+        <MDInput value={profileInput} onChange={(event) => handleSearchData(event.target.value)}
+          label="Search here for profiles..." style={{ width: "100%" }} />
       </MDBox>
       <MDBox p={2}>
         <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          {renderProfiles(profileData)}
+          {renderProfiles(filteredProfileData)}
         </MDBox>
       </MDBox>
       {renderSuccessSB}
