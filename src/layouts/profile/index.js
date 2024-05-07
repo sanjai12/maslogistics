@@ -62,10 +62,10 @@ function Overview() {
       <Header>
         <MDBox mt={5} mb={3}>
           <Grid container spacing={1}>
-            <Grid item xs={12} md={6} xl={4}>
+            {/* <Grid item xs={12} md={6} xl={4}>
               <PlatformSettings />
-            </Grid>
-            <Grid item xs={12} md={6} xl={4} sx={{ display: "flex" }}>
+            </Grid> */}
+            <Grid item xs={18} md={6} xl={6} sx={{ display: "flex" }}>
               <Divider orientation="vertical" sx={{ ml: -2, mr: 1 }} />
               <ProfileInfoCard
                 title="profile information"
@@ -75,7 +75,7 @@ function Overview() {
                 info={{
                   fullName: `${(localStorage.getItem("username")||'').toLocaleUpperCase()}`,
                   mobile: "",
-                  email: "",
+                  email: `${(localStorage.getItem("emailId")||'')}`,
                   location: "",
                 }}
                 social={[
@@ -100,7 +100,7 @@ function Overview() {
               />
               <Divider orientation="vertical" sx={{ mx: 0 }} />
             </Grid>
-            <Grid item xs={12} xl={4}>
+            <Grid item xs={18} md={6} xl={6}>
               <ProfilesList title="User Roles" shadow={false} />
             </Grid>
           </Grid>

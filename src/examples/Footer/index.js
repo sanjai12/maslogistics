@@ -78,7 +78,7 @@ function Footer({ company, links }) {
 Footer.defaultProps = {
   company: { href: "https://www.creative-tim.com/", name: "Creative Tim" },
   links: [
-    { href: "", name: "MAS Logistics" },
+    { href: "", name: "Logistics" },
     { href: "", name: "About Us" },
     { href: "", name: "Blog" },
     { href: "", name: "License" },

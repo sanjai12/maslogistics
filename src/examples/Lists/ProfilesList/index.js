@@ -33,6 +33,7 @@ import { useEffect, useState } from "react";
 import useRoles from "services/useRoles";
 import useChangeRole from "services/useChangeRole";
 import MDSnackbar from "components/MDSnackbar";
+import MDInput from "components/MDInput";
 
 const ProfilesList=({ title, shadow })=> {
   const {data} = useRoles();
@@ -130,6 +131,10 @@ const ProfilesList=({ title, shadow })=> {
         <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
           {title}
         </MDTypography>
+      </MDBox>
+      <br/>
+      <MDBox pr={2}>
+              <MDInput label="Search here" />
       </MDBox>
       <MDBox p={2}>
         <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>

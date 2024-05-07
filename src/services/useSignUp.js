@@ -22,7 +22,7 @@ const useSignUp = () => {
       localStorage.setItem("token", token);
       setSignedUp(true);
     } catch (error) {
-      setError(error.message ? error.message : "An error occurred");
+      setError(error?.response?.data || "An Error occured");
     } finally {
       setLoading(false);
     }

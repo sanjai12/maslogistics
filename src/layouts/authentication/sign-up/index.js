@@ -42,6 +42,8 @@ function Cover() {
   const [errorSB, setErrorSB] = useState(false);
   const [successSB, setSuccessSB] = useState(false);
   const { error, signedUp, signUp } = useSignUp();
+  const [termsChecked,setTermsChecked] = useState(false);
+
   const openErrorSB = (msg) => {
     setMessage(msg);
     setErrorSB(true);
@@ -98,7 +100,7 @@ function Cover() {
   );
 
   const handleRegister = () => {
-    if (username && password && email) {
+    if (username && password && email && termsChecked) {
       const emailRegex = /^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$/;
       // Example usage:
       const isValidEmail = emailRegex.test(email);
@@ -122,6 +124,10 @@ function Cover() {
   useEffect(() => {
     if (signedUp) {
       openSuccessSB();
+      setUsername("");
+      setPassword("");
+      setEmail("");
+      setTermsChecked(false);
     }
   }, [signedUp]);
 
@@ -185,7 +191,11 @@ function Cover() {
               />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
-              <Checkbox />
+              <Checkbox checked={termsChecked} onClick={()=>{
+                setTermsChecked((value)=>{
+                  return !value;
+                })
+              }}/>
               <MDTypography
                 variant="button"
                 fontWeight="regular"
@@ -207,7 +217,7 @@ function Cover() {
             </MDBox>
             <MDBox mt={4} mb={1}>
               <MDButton variant="gradient" color="info" onClick={handleRegister} fullWidth>
-                sign in
+                Register
               </MDButton>
             </MDBox>
             {renderErrorSB}

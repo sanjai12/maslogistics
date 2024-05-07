@@ -66,7 +66,7 @@ function Footer({ light }) {
                   fontWeight="regular"
                   color={light ? "white" : "dark"}
                 >
-                  MAS Logistics
+                  Logistics
                 </MDTypography>
               </Link>
             </MDBox>

@@ -162,6 +162,11 @@ const Basic = () => {
                 onChange={handleUsername}
                 label="Username"
                 fullWidth
+                onKeyPress={(event)=>{
+                  if(event.key==="Enter"){
+                    handleSubmit();
+                  }
+                }}
               />
             </MDBox>
             <MDBox mb={2}>
@@ -171,32 +176,14 @@ const Basic = () => {
                 onChange={handlePassword}
                 label="Password"
                 fullWidth
+                onKeyPress={(event)=>{
+                  if(event.key==="Enter"){
+                    handleSubmit();
+                  }
+                }}
               />
             </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Switch checked={admin} onChange={handleAdmin} />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                onClick={handleAdmin}
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-              >
-                &nbsp;&nbsp;Admin Login
-              </MDTypography>
-            </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                onClick={handleSetRememberMe}
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-              >
-                &nbsp;&nbsp;Remember me
-              </MDTypography>
-            </MDBox>
+            
             <MDBox mt={4} mb={1}>
               <MDButton
                 variant="gradient"
