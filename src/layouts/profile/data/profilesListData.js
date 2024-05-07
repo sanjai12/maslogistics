@@ -22,11 +22,11 @@ import team4 from "assets/images/team-4.jpg";
 
 export default [
   {
-    image: kal,
+    image: <>B</>,
     name: "Sophie B.",
     description: "Hi! I need more information..",
     action: {
-      type: "internal",
+      type: "",
       route: "/pages/profile/profile-overview",
       color: "info",
       label: "user",

@@ -27,9 +27,27 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDButton from "components/MDButton";
+import Icon from "@mui/material/Icon";
+import Tooltip from "@mui/material/Tooltip";
+import { useState } from "react";
 
-function ProfilesList({ title, profiles, shadow }) {
-  const renderProfiles = profiles.map(({ image, name, description, action }) => (
+const ProfilesList=({ title, profiles, shadow })=> {
+  const [profileData,setProfileData] = useState(profiles || []);
+
+  const handleProfileEdit = (index) => {
+    let profileEditOption = [...profileData];
+    profileEditOption[index].edit = true;
+    setProfileData(profileEditOption)
+  }
+
+  const handleProfileRoles = (index,value) => {
+    let profileEditOption = [...profileData];
+    profileEditOption[index].edit = false;
+    profileEditOption[index].action.label = value;
+    setProfileData(profileEditOption)
+  }
+
+  const renderProfiles = (profileRecord=[]) => profileRecord?.map(({ image, name, action },index) => (
     <MDBox key={name} component="li" display="flex" alignItems="center" py={1} mb={1}>
       <MDBox mr={2}>
         <MDAvatar src={image} alt="something here" shadow="md" />
@@ -40,21 +58,26 @@ function ProfilesList({ title, profiles, shadow }) {
         </MDTypography>
       </MDBox>
       <MDBox ml="auto">
-        {action.type === "internal" ? (
-          <MDButton component={Link} to={action.route} variant="text" color="info">
-            {action.label}
-          </MDButton>
+        {!profileData[index]?.edit ? (
+          <>
+            <MDButton variant="text" color="info">
+              {action.label}
+            </MDButton>
+            <Tooltip title="Edit Profile" placement="top">
+              <Icon sx={{ cursor: "pointer" }} fontSize="small" onClick={()=>handleProfileEdit(index)}>
+                edit
+              </Icon>
+            </Tooltip>
+          </>
         ) : (
-          <MDButton
-            component="a"
-            href={action.route}
-            target="_blank"
-            rel="noreferrer"
-            variant="text"
-            color={action.color}
-          >
-            {action.label}
-          </MDButton>
+          <div>
+            <MDButton variant="text" color="info" onClick={()=>handleProfileRoles(index,'USER')}>
+              USER
+            </MDButton>
+            <MDButton variant="text" color="info" onClick={()=>handleProfileRoles(index,'ADMIN')}>
+              ADMIN
+            </MDButton>
+          </div>
         )}
       </MDBox>
     </MDBox>
@@ -69,7 +92,7 @@ function ProfilesList({ title, profiles, shadow }) {
       </MDBox>
       <MDBox p={2}>
         <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          {renderProfiles}
+          {renderProfiles(profileData)}
         </MDBox>
       </MDBox>
     </Card>
