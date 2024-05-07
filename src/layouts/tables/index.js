@@ -41,7 +41,7 @@ function Tables() {
   const [detail,setDetail] = useState(null);
   let portData = [];
   if(localStorage.getItem('role') && localStorage.getItem('role')?.includes('ROLE_USER')){
-    portData = data?.filter(portRecord=>portRecord.name?.toLowerCase()===localStorage.getItem('username')?.toLowerCase());
+    portData = data?.filter(portRecord=>portRecord.email?.toLowerCase()===localStorage.getItem('emailId')?.toLowerCase());
   }else{
     portData= data;
   }

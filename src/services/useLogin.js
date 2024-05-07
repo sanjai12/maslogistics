@@ -19,6 +19,7 @@ const useLogin = () => {
       const token = response.data;
       localStorage.setItem("username", username);
       localStorage.setItem("userkey", password);
+      localStorage.setItem("emailId",token.emailId)
       localStorage.setItem('role',token.role);
       setLoggedIn(true);
     } catch (error) {
