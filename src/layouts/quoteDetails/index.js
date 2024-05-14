@@ -27,7 +27,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import { useState } from "react";
-import { AppBar, Button, Dialog, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Dialog, IconButton, MenuItem, Select, Toolbar, Typography } from "@mui/material";
 import MDAlertCloseIcon from "components/MDAlert/MDAlertCloseIcon";
 import { PDFViewer } from "@react-pdf/renderer";
 import PDFComponent from "layouts/tables/PDFViewer";
@@ -35,6 +35,7 @@ import React, { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import useGetCurrencies from "services/useGetCurrencies";
 import DataTable from "examples/Tables/DataTable";
+import MDInput from "components/MDInput";
 
 const QuoteDetail = ({ data, onBack }) => {
   const [open, setOpen] = useState(false);
@@ -73,16 +74,25 @@ const QuoteDetail = ({ data, onBack }) => {
           <PDFComponent data={data} />
         </PDFViewer>
       </Dialog>
-      <ComponentToPrint data={data} onBack={onBack} handlePrint={handlePrint} ref={componentRef} />
+      <ComponentToPrint data={data} currencyData={currencyData} onBack={onBack} handlePrint={handlePrint} ref={componentRef} />
       <Footer />
     </DashboardLayout>
   );
 }
 
 export class ComponentToPrint extends React.PureComponent {
+  state={
+    currency:null,
+    amount:''
+  }
+
+
+  shouldComponentUpdate(nextProps, nextState){
+    return nextState.currency !== this.state.currency || nextState.amount !== this.state.amount;
+  };
 
   render() {
-    const { data, onBack, handlePrint } = this.props;
+    const { data, onBack, currencyData,  handlePrint } = this.props;
 
     const loadColumns = (tableData = []) => {
       let columns = [];
@@ -107,6 +117,14 @@ export class ComponentToPrint extends React.PureComponent {
       })
       return rows;
     }
+
+
+    const loadFinalAmount = () => {
+      const loadAmount = data.quoteItems.length * Number(this.state.amount);
+      const conversion = loadAmount * currencyData?.find(d=>d.code===this.state.currency)?.exchangeRate;
+      return `$ ${conversion}`;
+    }
+
 
     return (
       <MDBox pt={6} pb={3}>
@@ -182,6 +200,72 @@ export class ComponentToPrint extends React.PureComponent {
                   }}
                   noEndBorder
                 />
+              </MDBox>
+              <br/>
+              <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+                      <MDTypography display="inline-block"
+                        style={{ fontSize: "14px" }}
+                        component="td"
+                        width="max-content"
+                        color="text" textTransform="uppercase">No of Quotes:</MDTypography>
+                      <MDTypography display="inline-block"
+                        component="td"
+                        style={{ fontSize: "14px" }}
+                        width="max-content"
+                        color="text" textTransform="uppercase">{data.quoteItems?.length}</MDTypography>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+              <MDTypography display="inline-block"
+                        style={{ fontSize: "14px" }}
+                        component="td"
+                        width="max-content"
+                        color="text" textTransform="uppercase">Select the Currency</MDTypography>
+              <Select
+                            labelId='demo-simple-select-label'
+                            label='Select Currency'
+                            onChange={(event) =>
+                             this.setState({currency:event.target.value})
+                            }
+                            id='containerType'
+                            value={this.state.currency}
+                          >
+                            {currencyData.map((field)=><MenuItem value={field.code}>{field.code}</MenuItem>)}
+                            </Select>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+                      <MDTypography display="inline-block"
+                        style={{ fontSize: "14px" }}
+                        component="td"
+                        width="max-content"
+                        color="text" textTransform="uppercase">Exchange Rate</MDTypography>
+                      <MDTypography display="inline-block"
+                        component="td"
+                        style={{ fontSize: "14px" }}
+                        width="max-content"
+                        color="text" textTransform="uppercase">{currencyData?.find(d=>d.code===this.state.currency)?.exchangeRate || ''}</MDTypography>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+                      <MDTypography display="inline-block"
+                        style={{ fontSize: "14px" }}
+                        component="td"
+                        width="max-content"
+                        color="text" textTransform="uppercase">Enter the amount in rupee for single container</MDTypography>
+                      <MDInput value={this.state.amount} onChange={(event) => this.setState({amount:event.target.value})}
+                      label="Enter amount"/>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+                      <MDTypography display="inline-block"
+                        style={{ fontSize: "14px" }}
+                        component="td"
+                        width="max-content"
+                        color="text" textTransform="uppercase">Total Amount : </MDTypography>
+                       <MDTypography display="inline-block"
+                        style={{ fontSize: "14px" }}
+                        component="td"
+                        width="max-content"
+                        color="text" textTransform="uppercase">{loadFinalAmount()}</MDTypography>
+              </div>
               </MDBox>
               <MDButton onClick={handlePrint} style={{ margin: 25 }} variant="gradient" color="info">
                 Download PDF
