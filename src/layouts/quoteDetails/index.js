@@ -33,9 +33,12 @@ import { PDFViewer } from "@react-pdf/renderer";
 import PDFComponent from "layouts/tables/PDFViewer";
 import React, { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
+import useGetCurrencies from "services/useGetCurrencies";
 
 const QuoteDetail = ({ data, onBack }) => {
 const [open,setOpen] = useState(false);
+const {currencyData}=useGetCurrencies();
+console.log(currencyData);
 const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,

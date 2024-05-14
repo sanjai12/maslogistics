@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const useGetCurrencies = () => {
-  const [data, setData] = useState(null);
+  const [currencyData, setCurrencyData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,7 +18,7 @@ const useGetCurrencies = () => {
             },
           }
         );
-        setData(response.data?.responseData);
+        setCurrencyData(response.data?.responseData);
         setLoading(false);
       } catch (error) {
         setError(error);
@@ -29,7 +29,7 @@ const useGetCurrencies = () => {
     fetchData();
   }, []);
 
-  return { data, loading, error };
+  return { currencyData, loading, error };
 };
 
 export default useGetCurrencies;
