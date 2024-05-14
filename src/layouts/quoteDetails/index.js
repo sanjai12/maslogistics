@@ -34,20 +34,21 @@ import PDFComponent from "layouts/tables/PDFViewer";
 import React, { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import useGetCurrencies from "services/useGetCurrencies";
+import DataTable from "examples/Tables/DataTable";
 
 const QuoteDetail = ({ data, onBack }) => {
-const [open,setOpen] = useState(false);
-const {currencyData}=useGetCurrencies();
-console.log(currencyData);
-const componentRef = useRef();
+  const [open, setOpen] = useState(false);
+  const { currencyData } = useGetCurrencies();
+  console.log(currencyData);
+  const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
 
 
-const handleClose = () => {
-  setOpen(false);
-}
+  const handleClose = () => {
+    setOpen(false);
+  }
 
 
 
@@ -55,23 +56,23 @@ const handleClose = () => {
     <DashboardLayout>
       <DashboardNavbar />
       <Dialog fullScreen open={open} onClose={handleClose}>
-      <AppBar sx={{ position: "relative" }}>
-        <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-            <MDAlertCloseIcon />
-          </IconButton>
-          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-            PDF
-          </Typography>
-          <Button autoFocus color="inherit" onClick={handleClose}>
-            Close
-          </Button>
-        </Toolbar>
-      </AppBar>
-      <PDFViewer style={{ width: "100%", height: "100vh" }}>
-        <PDFComponent data={data}/>
-      </PDFViewer>
-    </Dialog>
+        <AppBar sx={{ position: "relative" }}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <MDAlertCloseIcon />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              PDF
+            </Typography>
+            <Button autoFocus color="inherit" onClick={handleClose}>
+              Close
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <PDFViewer style={{ width: "100%", height: "100vh" }}>
+          <PDFComponent data={data} />
+        </PDFViewer>
+      </Dialog>
       <ComponentToPrint data={data} onBack={onBack} handlePrint={handlePrint} ref={componentRef} />
       <Footer />
     </DashboardLayout>
@@ -80,10 +81,35 @@ const handleClose = () => {
 
 export class ComponentToPrint extends React.PureComponent {
 
-  render(){
-    const {data,onBack,handlePrint} = this.props;
+  render() {
+    const { data, onBack, handlePrint } = this.props;
+
+    const loadColumns = (tableData = []) => {
+      let columns = [];
+      Object.keys(tableData).forEach((field) => {
+        const obj = {};
+        obj['Header'] = field.toLocaleUpperCase();
+        obj['accessor'] = field;
+        obj['align'] = 'center';
+        columns.push(obj);
+      })
+      return columns;
+    }
+
+    const loadRows = (tableData=[]) => {
+      const rows = [];
+      Object.keys(tableData).forEach((field, index) => {
+        let obj = {};
+        obj[field] = (<MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          {tableData[index][field]}
+        </MDTypography>);
+        rows.push(obj);
+      })
+      return rows;
+    }
+
     return (
-    <MDBox pt={6} pb={3}>
+      <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
@@ -148,8 +174,16 @@ export class ComponentToPrint extends React.PureComponent {
                         color="text" style={{ fontSize: "14px" }} textTransform="uppercase">{data[fields]}</MDTypography>
                     </div>)}
                 </div>
+                <br />
+                <DataTable
+                  table={{
+                    columns: loadColumns(data.quoteItems),
+                    rows: data.quoteItems ? loadRows(data.quoteItems) : [],
+                  }}
+                  noEndBorder
+                />
               </MDBox>
-              <MDButton onClick={handlePrint} style={{margin:25}} variant="gradient" color="info">
+              <MDButton onClick={handlePrint} style={{ margin: 25 }} variant="gradient" color="info">
                 Download PDF
               </MDButton>
             </Card>
