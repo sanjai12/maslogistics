@@ -88,13 +88,13 @@ export class ComponentToPrint extends React.PureComponent {
 
 
   shouldComponentUpdate(nextProps, nextState){
-    return nextState.currency !== this.state.currency || nextState.amount !== this.state.amount;
+    return nextState.currency !== this.state.currency || nextState.amount !== this.state.amount || nextProps.currencyData !== this.props.currencyData;
   };
 
   render() {
     const { data, onBack, currencyData,  handlePrint } = this.props;
 
-    const loadColumns = (tableData = []) => {
+    const loadColumns = (tableData = {}) => {
       let columns = [];
       Object.keys(tableData).forEach((field) => {
         const obj = {};
@@ -108,21 +108,27 @@ export class ComponentToPrint extends React.PureComponent {
 
     const loadRows = (tableData=[]) => {
       const rows = [];
-      Object.keys(tableData).forEach((field, index) => {
+      tableData.forEach((mapObj) => {
         let obj = {};
+        Object.keys(mapObj).forEach((field)=>{
         obj[field] = (<MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-          {tableData[index][field]}
+          {mapObj[field]}
         </MDTypography>);
-        rows.push(obj);
       })
+      rows.push(obj);
+    })
       return rows;
     }
 
 
     const loadFinalAmount = () => {
-      const loadAmount = data.quoteItems.length * Number(this.state.amount);
-      const conversion = loadAmount * currencyData?.find(d=>d.code===this.state.currency)?.exchangeRate;
+      if(this.state.amount && this.state.currency){
+      let loadAmount = data.quoteItems.length * Number(this.state.amount);
+      let conversion = loadAmount * currencyData?.find(d=>d.code===this.state.currency)?.exchangeRate;
       return `$ ${conversion}`;
+      }else{
+        return '';
+      }
     }
 
 
@@ -193,16 +199,38 @@ export class ComponentToPrint extends React.PureComponent {
                     </div>)}
                 </div>
                 <br />
-                <DataTable
+                
+              </MDBox>
+              <MDBox
+                mx={2}
+                mt={-3}
+                py={3}
+                px={2}
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="info"
+              >
+                <MDTypography variant="h6" color="white">
+                  <div style={{ display: "flex", alignItems: "center", gap: 25 }}>
+                    <div>Quote Items</div>
+                  </div>
+                </MDTypography>
+              </MDBox>
+              <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
+              <DataTable
                   table={{
-                    columns: loadColumns(data.quoteItems),
+                    columns: loadColumns(data.quoteItems[0]),
                     rows: data.quoteItems ? loadRows(data.quoteItems) : [],
                   }}
                   noEndBorder
+                  showTotalEntries={false}
+                  canSearch={false}
+                  isSorted={false}
                 />
-              </MDBox>
+                </MDBox>
               <br/>
-              <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
+              <MDBox pt={3} style={{ padding: "40px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
                       <MDTypography display="inline-block"
                         style={{ fontSize: "14px" }}
@@ -224,13 +252,16 @@ export class ComponentToPrint extends React.PureComponent {
               <Select
                             labelId='demo-simple-select-label'
                             label='Select Currency'
+                            style={{width:100,height:30}}
                             onChange={(event) =>
                              this.setState({currency:event.target.value})
                             }
                             id='containerType'
                             value={this.state.currency}
                           >
-                            {currencyData.map((field)=><MenuItem value={field.code}>{field.code}</MenuItem>)}
+                            {currencyData?.map(({ code }) => (
+                <MenuItem value={code}>{code}</MenuItem>
+              ))}
                             </Select>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
