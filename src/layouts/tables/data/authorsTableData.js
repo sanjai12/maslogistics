@@ -197,16 +197,8 @@ export const loadRows = (record = [],callback) => {
         <Icon>{data.type === "sea" ? `sailing` : `flight`}</Icon>
       </MDTypography>
     ),
-    cargoType: (
-      <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        {data?.cargoType}
-      </MDTypography>
-    ),
-    shippingDate: (
-      <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        {data?.shippingDate}
-      </MDTypography>
-    ),
+    cargoType: data?.cargoType,
+    shippingDate: data?.shippingDate,
     dangerous: (
       <MDBox ml={-1}>
         {data?.dangerous === "Yes" ? (
@@ -216,26 +208,10 @@ export const loadRows = (record = [],callback) => {
         )}
       </MDBox>
     ),
-    containerCount: (
-      <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        {calculatePkg(data?.quoteItems || [])}
-      </MDTypography>
-    ),
-    createdAt: (
-      <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        {data?.createdAt}
-      </MDTypography>
-    ),
-    polName: (
-      <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        {data?.polName}
-      </MDTypography>
-    ),
-    podName: (
-      <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        {data?.podName}
-      </MDTypography>
-    ),
+    containerCount: calculatePkg(data?.quoteItems || []),
+    createdAt: data?.createdAt,
+    polName: data?.polName,
+    podName: data?.podName,
     action: (
       <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
         <Icon onClick={()=>callback(data)}>visibility</Icon>
@@ -248,13 +224,13 @@ export const tableData = {
   column: [
     { Header: "Company", accessor: "company", align: "left" },
     { Header: "mode", accessor: "type", align: "left" },
-    { Header: "Cargo type", accessor: "cargoType", align: "center" },
-    { Header: "Shipping Date", accessor: "shippingDate", align: "center" },
-    { Header: "Dangerous", accessor: "dangerous", align: "center" },
-    { Header: "No of Pkg/Container", accessor: "containerCount", align: "center" },
-    { Header: "Quote Date", accessor: "createdAt", align: "center" },
-    { Header: "Origin", accessor: "polName", align: "center" },
-    { Header: "Destination", accessor: "podName", align: "center" },
-    { Header: "action", accessor: "action", align: "center" },
+    { Header: "Cargo type", accessor: "cargoType", align: "left" },
+    { Header: "Shipping Date", accessor: "shippingDate", align: "left" },
+    { Header: "Dangerous", accessor: "dangerous", align: "left" },
+    { Header: "No of Pkg/Container", accessor: "containerCount", align: "left" },
+    { Header: "Quote Date", accessor: "createdAt", align: "left" },
+    { Header: "Origin", accessor: "polName", align: "left" },
+    { Header: "Destination", accessor: "podName", align: "left" },
+    { Header: "action", accessor: "action", align: "left" },
   ],
 };

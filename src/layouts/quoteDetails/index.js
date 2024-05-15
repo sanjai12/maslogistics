@@ -219,6 +219,7 @@ export class ComponentToPrint extends React.PureComponent {
               </MDBox>
               <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
               <DataTable
+                entriesPerPage={false}
                   table={{
                     columns: loadColumns(data.quoteItems[0]),
                     rows: data.quoteItems ? loadRows(data.quoteItems) : [],
