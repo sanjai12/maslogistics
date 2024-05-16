@@ -34,10 +34,12 @@ import useRoles from "services/useRoles";
 import useChangeRole from "services/useChangeRole";
 import MDSnackbar from "components/MDSnackbar";
 import MDInput from "components/MDInput";
+import useDeleteRole from "services/useDeleteRole";
 
 const ProfilesList = ({ title, shadow }) => {
   const { data } = useRoles();
   const { changeRole } = useChangeRole();
+  const { deleteRole } = useDeleteRole();
 
   const loadProfileRoles = (record) => {
     return record?.map(data => ({ ...data, role: data.role === "[ROLE_ADMIN]" ? "ADMIN" : "USER" }))
@@ -46,7 +48,8 @@ const ProfilesList = ({ title, shadow }) => {
   const [profileData, setProfileData] = useState([]);
   const [successSB, setSuccessSB] = useState(false);
   const [profileInput, setProfileInput] = useState('');
-  const [filteredProfileData,setFilteredProfileData] = useState([]);
+  const [filteredProfileData, setFilteredProfileData] = useState([]);
+  const [profileContent, setProfileContent] = useState("Profile changed successfully.");
 
   useEffect(() => {
     if (data && data.length) {
@@ -63,9 +66,22 @@ const ProfilesList = ({ title, shadow }) => {
     setFilteredProfileData(profileEditOption)
   }
 
+  const handleProfileDelete = async (index, username) => {
+    await deleteRole({ username: username });
+    setProfileContent("Profile deleted successfully.");
+    openSuccessSB();
+    let profileEditOption = [...filteredProfileData];
+    const user = profileEditOption[index].username;
+    setFilteredProfileData(profileEditOption.filter((data) => data.username !== user));
+
+    let oldProfileData = [...profileData];
+    const oldUser = oldProfileData[index].username;
+    setProfileData(oldProfileData.filter((data) => data.username !== oldUser));
+  }
+
   const handleSearchData = (value) => {
     setProfileInput(value)
-    setFilteredProfileData(value?[...profileData].filter(data=>data.username.includes(value)):[]);
+    setFilteredProfileData(value ? [...profileData].filter(data => data.username.includes(value)) : []);
   }
 
   const handleProfileRoles = async (index, value) => {
@@ -75,11 +91,12 @@ const ProfilesList = ({ title, shadow }) => {
       role: value === "USER" ? "ROLE_USER" : "ROLE_ADMIN",
     }
     await changeRole(userData);
+    setProfileContent("Profile changed successfully.");
     openSuccessSB();
     profileEditOption[index].edit = false;
     profileEditOption[index].role = value;
-    const oldProfileDataIndex = profileData.findIndex(({username})=>username===userData.username);
-    if(oldProfileDataIndex){
+    const oldProfileDataIndex = profileData.findIndex(({ username }) => username === userData.username);
+    if (oldProfileDataIndex) {
       const oldProfileData = [...profileData];
       oldProfileData[oldProfileDataIndex].role = value;
       setProfileData(oldProfileData);
@@ -92,7 +109,7 @@ const ProfilesList = ({ title, shadow }) => {
       color="success"
       icon="check"
       title="Success"
-      content="Profile Changed successfully."
+      content={profileContent}
       dateTime="just now"
       open={successSB}
       onClose={closeSuccessSB}
@@ -117,11 +134,20 @@ const ProfilesList = ({ title, shadow }) => {
             <MDButton variant="text" color="info">
               {role}
             </MDButton>
-            <Tooltip title="Edit Profile" placement="top">
-              <Icon sx={{ cursor: "pointer" }} fontSize="small" onClick={() => handleProfileEdit(index)}>
-                edit
-              </Icon>
-            </Tooltip>
+            <MDButton variant="text" color="info">
+              <Tooltip title="Edit Profile" placement="top">
+                <Icon sx={{ cursor: "pointer" }} fontSize="small" onClick={() => handleProfileEdit(index)}>
+                  edit
+                </Icon>
+              </Tooltip>
+            </MDButton>
+            <MDButton variant="text" color="info">
+              <Tooltip title="Delete Profile" placement="top">
+                <Icon sx={{ cursor: "pointer" }} fontSize="small" onClick={() => handleProfileDelete(index, username)}>
+                  delete
+                </Icon>
+              </Tooltip>
+            </MDButton>
           </>
         ) : (
           <div>
