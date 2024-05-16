@@ -162,7 +162,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem icon={<Icon>email</Icon>} title="Change Password" onClick={()=>{setOpen(true)}}/>
+      <NotificationItem icon={<Icon>email</Icon>} title="Change Password" onClick={()=>{
+        setPassword(null);
+        setNewPassword(null);
+        setOpen(true)}}/>
     </Menu>
   );
 
