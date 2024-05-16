@@ -52,6 +52,9 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import { Dialog, TextField, Typography } from "@mui/material";
+import MDAlertCloseIcon from "components/MDAlert/MDAlertCloseIcon";
+import MDButton from "components/MDButton";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -59,6 +62,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const [open,setOpen] = useState(false);
 
   useEffect(() => {
     // Setting the navbar type
@@ -91,6 +95,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
 
+  const handleClose = () => {
+    setOpen(false);
+  }
+
   // Render the notifications menu
   const renderMenu = () => (
     <Menu
@@ -104,9 +112,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem icon={<Icon>email</Icon>} title="Check new messages" />
-      <NotificationItem icon={<Icon>podcasts</Icon>} title="Manage Podcast sessions" />
-      <NotificationItem icon={<Icon>shopping_cart</Icon>} title="Payment successfully completed" />
+      <NotificationItem icon={<Icon>email</Icon>} title="Change Password" onClick={()=>{setOpen(true)}}/>
     </Menu>
   );
 
@@ -156,7 +162,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   {miniSidenav ? "menu_open" : "menu"}
                 </Icon>
               </IconButton>
-              <IconButton
+              {/* <IconButton
                 size="small"
                 disableRipple
                 color="inherit"
@@ -164,7 +170,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleConfiguratorOpen}
               >
                 <Icon sx={iconsStyle}>settings</Icon>
-              </IconButton>
+              </IconButton> */}
               <IconButton
                 size="small"
                 disableRipple
@@ -175,12 +181,52 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 variant="contained"
                 onClick={handleOpenMenu}
               >
-                <Icon sx={iconsStyle}>notifications</Icon>
+                <Icon sx={iconsStyle}>settings</Icon>
               </IconButton>
               {renderMenu()}
             </MDBox>
           </MDBox>
         )}
+        <Dialog fullWidth  open={open} onClose={handleClose}>
+        <AppBar sx={{ position: "relative" }} style={{background:"#344767"}}>
+          <Toolbar>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              Change Password
+            </Typography>
+            <MDButton variant="gradient" onClick={handleClose} color={"dark"}>
+              Close
+            </MDButton>
+          </Toolbar>
+        </AppBar>
+        <MDBox pt={4} pb={3} px={3} style={{background:"#344767"}}>
+          <MDBox component="form" role="form">
+            <MDBox mb={2}>
+            <TextField
+                      fullWidth
+                      id='commodity'
+                      label='Commodity'
+                      variant='outlined'
+                    />
+            </MDBox>
+            <MDBox mb={2}>
+              <MDInput
+                type="email"
+                label="Email"
+                variant="standard"
+                fullWidth
+              />
+              </MDBox>
+              <MDBox mb={2}>
+              <MDInput
+                type="email"
+                label="Email"
+                variant="standard"
+                fullWidth
+              />
+              </MDBox>
+              </MDBox>
+              </MDBox>
+      </Dialog>
       </Toolbar>
     </AppBar>
   );
