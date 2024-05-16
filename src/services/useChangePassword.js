@@ -1,18 +1,18 @@
 import { useState } from "react";
 import axios from "axios";
 
-const useChangeRole = () => {
+const useChangePassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [roleChanged, setRoleChanged] = useState(false);
+  const [data, setData] = useState(false);
 
-  const changeRole = async (userData) => {
+  const changePassword = async (userData,callback) => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await axios.post(
-        "https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/admin/changeRole",
+        "https://maslogistics-555196998.eu-north-1.elb.amazonaws.com/api/changePassword",
         userData,
         {
           auth: { 
@@ -22,15 +22,18 @@ const useChangeRole = () => {
         }
       );
       const token = response.data;
-      setRoleChanged(true);
+      localStorage.setItem("userkey",userData.newPassword)
+      callback({success:true,message:token})
+      setData(token);
     } catch (error) {
+      callback({success:false, message:error.response.data ? error.response.data : "An error occurred"})
       setError(error.response.data ? error.response.data : "An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  return { loading, error, roleChanged, changeRole };
+  return { loading, error, data, changePassword };
 };
 
-export default useChangeRole;
+export default useChangePassword;

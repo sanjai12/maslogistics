@@ -55,6 +55,8 @@ import {
 import { Dialog, TextField, Typography } from "@mui/material";
 import MDAlertCloseIcon from "components/MDAlert/MDAlertCloseIcon";
 import MDButton from "components/MDButton";
+import useChangePassword from "services/useChangePassword";
+import MDSnackbar from "components/MDSnackbar";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -63,6 +65,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
   const [open,setOpen] = useState(false);
+  const [password,setPassword] = useState(null);
+  const [newPassword,setNewPassword] = useState(null);
+  const {changePassword} = useChangePassword();
+
+  const [successSB, setSuccessSB] = useState(false);
+  const [profileContent, setProfileContent] = useState("Password changed successfully.");
+  const [color,setColor] = useState("success")
+
+  const openSuccessSB = () => setSuccessSB(true);
+  const closeSuccessSB = () => setSuccessSB(false);
+
 
   useEffect(() => {
     // Setting the navbar type
@@ -98,6 +111,43 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const handleClose = () => {
     setOpen(false);
   }
+
+  const changePasswordHandler = () => {
+    const payload ={ 
+      username:localStorage.getItem("username"),
+      password:password,
+      newPassword:newPassword
+    }
+    changePassword(payload,(response)=>{
+      if(response.success){
+        setColor("success")
+        setProfileContent("Password changed successfully.")
+        openSuccessSB();
+        setOpen(false);
+        setPassword(null);
+        setNewPassword(null);
+      }else{
+        setColor("warning")
+        setProfileContent(response.message)
+        openSuccessSB();
+      }
+    });
+  }
+
+  const renderSuccessSB = (
+    <MDSnackbar
+      color={color}
+      icon={color==="success"?"check":"warning"}
+      title={color==="success"?"Success":"Warning"}
+      content={profileContent}
+      dateTime="just now"
+      open={successSB}
+      onClose={closeSuccessSB}
+      close={closeSuccessSB}
+      bgWhite
+    />
+  );
+
 
   // Render the notifications menu
   const renderMenu = () => (
@@ -203,31 +253,47 @@ function DashboardNavbar({ absolute, light, isMini }) {
             <MDBox mb={2}>
             <TextField
                       fullWidth
-                      id='commodity'
-                      label='Commodity'
+                      id='username'
+                      label='Username'
                       variant='outlined'
+                      value={localStorage.getItem("username")||""}
                     />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput
-                type="email"
-                label="Email"
-                variant="standard"
-                fullWidth
-              />
+            <TextField
+                      fullWidth
+                      id='password'
+                      value={password}
+                      onChange={(event)=>{
+                        setPassword(event.target.value)
+                      }}
+                      label='Old Password'
+                      variant='outlined'
+                    />
               </MDBox>
               <MDBox mb={2}>
-              <MDInput
-                type="email"
-                label="Email"
-                variant="standard"
-                fullWidth
-              />
+              <TextField
+                      fullWidth
+                      value={newPassword}
+                      onChange={(event)=>{
+                        setNewPassword(event.target.value)
+                      }}
+                      id='newPassword'
+                      label='New Password'
+                      variant='outlined'
+                    />
+              </MDBox>
+              <MDBox mb={2}>
+              <MDButton variant="gradient" color={"dark"} style={{textAlign:"right"}} onClick={changePasswordHandler}>
+              Submit
+            </MDButton>
               </MDBox>
               </MDBox>
               </MDBox>
+              
       </Dialog>
       </Toolbar>
+      {renderSuccessSB}
     </AppBar>
   );
 }

@@ -24,7 +24,7 @@ const useDeleteRole = () => {
       const token = response.data;
       setRoleDeleted(token);
     } catch (error) {
-        setDeleteRoleError(error.message ? error.message : "An error occurred");
+        setDeleteRoleError(error.response.data ? error.response.data : "An error occurred");
     } finally {
         setDeleteRoleLoading(false);
     }
