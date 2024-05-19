@@ -36,6 +36,8 @@ import { useReactToPrint } from 'react-to-print';
 import useGetCurrencies from "services/useGetCurrencies";
 import DataTable from "examples/Tables/DataTable";
 import MDInput from "components/MDInput";
+import ShipmentQuoteDetails from "./ShipmentQuoteDetails";
+import AirQuoteDetails from "./AirQuoteDetails";
 
 const QuoteDetail = ({ data, onBack }) => {
   const [open, setOpen] = useState(false);
@@ -83,12 +85,15 @@ const QuoteDetail = ({ data, onBack }) => {
 export class ComponentToPrint extends React.PureComponent {
   state={
     currency:null,
-    amount:''
+    amount:0,
+    miscellaneous:0,
+    tax:0
   }
 
 
   shouldComponentUpdate(nextProps, nextState){
-    return nextState.currency !== this.state.currency || nextState.amount !== this.state.amount || nextProps.currencyData !== this.props.currencyData;
+    return nextState.currency !== this.state.currency || nextState.amount !== this.state.amount || 
+    nextState.miscellaneous !== this.state.miscellaneous || nextProps.currencyData !== this.props.currencyData;
   };
 
   render() {
@@ -125,7 +130,7 @@ export class ComponentToPrint extends React.PureComponent {
       if(this.state.amount && this.state.currency){
       let loadAmount = data.quoteItems.length * Number(this.state.amount);
       let conversion = loadAmount * currencyData?.find(d=>d.code===this.state.currency)?.exchangeRate;
-      return `$ ${conversion}`;
+      return `$ ${conversion + Number(this.state.miscellaneous)}`;
       }else{
         return '';
       }
@@ -217,8 +222,9 @@ export class ComponentToPrint extends React.PureComponent {
                   </div>
                 </MDTypography>
               </MDBox>
+              {data.type.toLocaleUpperCase()!=="AIR" &&
               <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
-              <DataTable
+              {/* <DataTable
                 entriesPerPage={false}
                   table={{
                     columns: loadColumns(data.quoteItems[0]),
@@ -228,8 +234,17 @@ export class ComponentToPrint extends React.PureComponent {
                   showTotalEntries={false}
                   canSearch={false}
                   isSorted={false}
-                />
-                </MDBox>
+                /> */}
+                <ShipmentQuoteDetails quoteItems={data.quoteItems} loadAmountDetails={(amountValue)=>{
+                  this.setState({amount:amountValue})
+                }}/>
+                </MDBox>}
+                {data.type.toLocaleUpperCase()==="AIR" &&
+                <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
+                <AirQuoteDetails quoteItems={data.quoteItems} loadAmountDetails={(amountValue)=>{
+                  this.setState({amount:amountValue})
+                }}/>
+                </MDBox>}
               <br/>
               <MDBox pt={3} style={{ padding: "40px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
@@ -282,8 +297,8 @@ export class ComponentToPrint extends React.PureComponent {
                         style={{ fontSize: "14px" }}
                         component="td"
                         width="max-content"
-                        color="text" textTransform="uppercase">Enter the amount in rupee for single container</MDTypography>
-                      <MDInput value={this.state.amount} onChange={(event) => this.setState({amount:event.target.value})}
+                        color="text" textTransform="uppercase">Miscellaneous Amount</MDTypography>
+                      <MDInput type="number" value={this.state.miscellaneous} onChange={(event) => this.setState({miscellaneous:event.target.value})}
                       label="Enter amount"/>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
