@@ -48,7 +48,7 @@ const ShipmentQuoteDetails = ({quoteItems,loadAmountDetails}) => {
                       flexWrap={'nowrap'}
                       container
                       style={{ marginTop: 5 }}
-                      spacing={1}
+                      spacing={0}
                     >
                       <Grid item xs={2}>
                           <TextField
@@ -62,7 +62,7 @@ const ShipmentQuoteDetails = ({quoteItems,loadAmountDetails}) => {
                       <Grid item xs={1}>
                         <TextField
                           fullWidth
-                          label='Quantity'
+                          label='No'
                           variant='outlined'
                           id='containerQty'
                           value={quoteItemData?.[count]?.containerQty}
@@ -71,7 +71,7 @@ const ShipmentQuoteDetails = ({quoteItems,loadAmountDetails}) => {
                       <Grid item xs={1}>
                         <TextField
                           fullWidth
-                          label='Gross Weight(KG)'
+                          label='Weight'
                           variant='outlined'
                           placeholder='0.00'
                           id='grossWeight'

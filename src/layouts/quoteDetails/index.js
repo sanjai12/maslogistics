@@ -76,7 +76,18 @@ const QuoteDetail = ({ data, onBack }) => {
           <PDFComponent data={data} />
         </PDFViewer>
       </Dialog>
+      <MDTypography variant="h6" color="white">
+                  <div style={{ display: "flex", alignItems: "center", cursor:"pointer", gap: 10 }} onClick={() => onBack()}>
+                    <Icon style={{ cursor: "pointer" }} >arrow_back</Icon>
+                    <div>Back to Details</div>
+                  </div>
+      </MDTypography>
       <ComponentToPrint data={data} currencyData={currencyData} onBack={onBack} handlePrint={handlePrint} ref={componentRef} />
+      <div style={{textAlign:"right"}}>
+      <MDButton onClick={handlePrint} style={{ margin: 5 }} variant="gradient" color="info">
+                Download PDF
+      </MDButton>
+      </div>
       <Footer />
     </DashboardLayout>
   );
@@ -154,7 +165,6 @@ export class ComponentToPrint extends React.PureComponent {
               >
                 <MDTypography variant="h6" color="white">
                   <div style={{ display: "flex", alignItems: "center", gap: 25 }}>
-                    <Icon style={{ cursor: "pointer" }} onClick={() => onBack()}>arrow_back</Icon>
                     <div>Quote Details</div>
                   </div>
                 </MDTypography>
@@ -223,7 +233,7 @@ export class ComponentToPrint extends React.PureComponent {
                 </MDTypography>
               </MDBox>
               {data.type.toLocaleUpperCase()!=="AIR" &&
-              <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
+              <MDBox pt={3} style={{ padding: "10px", paddingTop:20,display: "flex", justifyContent: "space-between" }}>
               {/* <DataTable
                 entriesPerPage={false}
                   table={{
@@ -240,26 +250,14 @@ export class ComponentToPrint extends React.PureComponent {
                 }}/>
                 </MDBox>}
                 {data.type.toLocaleUpperCase()==="AIR" &&
-                <MDBox pt={3} style={{ padding: "40px", display: "flex", justifyContent: "space-between" }}>
+                <MDBox pt={3} style={{ padding: "10px", paddingTop:20,display: "flex", justifyContent: "space-between" }}>
                 <AirQuoteDetails quoteItems={data.quoteItems} loadAmountDetails={(amountValue)=>{
                   this.setState({amount:amountValue})
                 }}/>
                 </MDBox>}
               <br/>
-              <MDBox pt={3} style={{ padding: "40px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
-                      <MDTypography display="inline-block"
-                        style={{ fontSize: "14px" }}
-                        component="td"
-                        width="max-content"
-                        color="text" textTransform="uppercase">No of Quotes:</MDTypography>
-                      <MDTypography display="inline-block"
-                        component="td"
-                        style={{ fontSize: "14px" }}
-                        width="max-content"
-                        color="text" textTransform="uppercase">{data.quoteItems?.length}</MDTypography>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 10 }}>
+              <MDBox pt={3} style={{ padding: "10px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 0 }}>
               <MDTypography display="inline-block"
                         style={{ fontSize: "14px" }}
                         component="td"
@@ -314,9 +312,7 @@ export class ComponentToPrint extends React.PureComponent {
                         color="text" textTransform="uppercase">{loadFinalAmount()}</MDTypography>
               </div>
               </MDBox>
-              <MDButton onClick={handlePrint} style={{ margin: 25 }} variant="gradient" color="info">
-                Download PDF
-              </MDButton>
+              
             </Card>
           </Grid>
         </Grid>
