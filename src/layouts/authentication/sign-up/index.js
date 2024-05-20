@@ -30,7 +30,7 @@ import MDButton from "components/MDButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
-import bgImage from "assets/images/sign-up-image.jpeg";
+import bgImage from "assets/images/signin-image.jpg";
 import { useEffect, useState } from "react";
 import MDSnackbar from "components/MDSnackbar";
 import useSignUp from "services/useSignUp";

@@ -36,6 +36,7 @@ export const tableData = {
     column: [
       { Header: "ID", accessor: "id", align: "left" },
       { Header: "Code", accessor: "packingCode", align: "left" },
+      { Header: "Flag", accessor: "flag", align: "left" },
       { Header: "Port Name", accessor: "packingName", align: "left" },
       { Header: "Country", accessor: "countryName", align: "center" },
     ],
@@ -45,7 +46,7 @@ export const tableData = {
     return record?.map((data) => ({
       id: data?.id,
       packingCode: data?.packingCode,
-      packingName: (
+      flag: (
         <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
           <Box
               component='li'
@@ -58,10 +59,11 @@ export const tableData = {
                 src={`https://flagcdn.com/w20/${data?.countryCode.toLowerCase()}.png`}
                 alt=''
               />
-              {data?.packingName}
+              {''}
             </Box>
         </MDTypography>
       ),
+      packingName:data?.packingName,
       countryName: data?.countryName,
       
     }));
