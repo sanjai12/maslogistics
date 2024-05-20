@@ -141,7 +141,8 @@ export class ComponentToPrint extends React.PureComponent {
       if(this.state.amount && this.state.currency){
       let loadAmount = data.quoteItems.length * Number(this.state.amount);
       let conversion = loadAmount * currencyData?.find(d=>d.code===this.state.currency)?.exchangeRate;
-      return `$ ${conversion + Number(this.state.miscellaneous)}`;
+      const currencySymbol = currencyData?.find(d=>d.code===this.state.currency)?.currencySymbol || '';
+      return `${currencySymbol} ${conversion + Number(this.state.miscellaneous)}`;
       }else{
         return '';
       }
@@ -256,7 +257,7 @@ export class ComponentToPrint extends React.PureComponent {
                 }}/>
                 </MDBox>}
               <br/>
-              <MDBox pt={3} style={{ padding: "10px" }}>
+              <MDBox pt={3} style={{ padding: "10px",margin:25 }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 20, paddingBottom: 0 }}>
               <MDTypography display="inline-block"
                         style={{ fontSize: "14px" }}
