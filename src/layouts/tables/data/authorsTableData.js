@@ -191,7 +191,7 @@ export const Author = ({ image, name, email }) => (
 
 export const loadRows = (record = [],callback) => {
   return record?.map((data) => ({
-    company: <Author image={team2} name={data?.company} email={data?.email} />,
+    company: <Author  name={data?.company} email={data?.email} />,
     type: (
       <MDTypography component="a" href="#" color="text">
         <Icon>{data.type === "sea" ? `sailing` : `flight`}</Icon>

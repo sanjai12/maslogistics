@@ -54,8 +54,15 @@ const ProfilesList = ({ title, shadow }) => {
   useEffect(() => {
     if (data && data.length) {
       setProfileData(loadProfileRoles(data));
+      setFilteredProfileData(loadProfileRoles(data));
     }
   }, [data])
+
+  useEffect(() => {
+    if (!profileInput) {
+      setFilteredProfileData([...profileData])
+    }
+  }, [profileInput])
 
   const openSuccessSB = () => setSuccessSB(true);
   const closeSuccessSB = () => setSuccessSB(false);
@@ -163,6 +170,8 @@ const ProfilesList = ({ title, shadow }) => {
     </MDBox>
   ));
 
+
+
   return (
     <Card sx={{ height: "100%", boxShadow: !shadow && "none" }}>
       <MDBox pt={2} px={2}>
@@ -175,7 +184,12 @@ const ProfilesList = ({ title, shadow }) => {
           label="Search here for profiles..." style={{ width: "100%" }} />
       </MDBox>
       <MDBox p={2}>
-        <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
+        <MDBox component="ul" display="flex" style={{
+          height: "40vh",
+          overflow: "auto",
+          scrollBehavior: "smooth",
+          scrollbarWidth: "thin"
+        }} flexDirection="column" p={0} m={0}>
           {renderProfiles(filteredProfileData)}
         </MDBox>
       </MDBox>
