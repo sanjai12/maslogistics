@@ -43,16 +43,8 @@ export const tableData = {
 
   export const loadRows = (record = []) => {
     return record?.map((data) => ({
-      id: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-          {data?.id}
-        </MDTypography>
-      ),
-      packingCode: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-          {data?.packingCode}
-        </MDTypography>
-      ),
+      id: data?.id,
+      packingCode: data?.packingCode,
       packingName: (
         <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
           <Box
@@ -70,11 +62,7 @@ export const tableData = {
             </Box>
         </MDTypography>
       ),
-      countryName: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-          {data?.countryName}
-        </MDTypography>
-      ),
+      countryName: data?.countryName,
       
     }));
   };
