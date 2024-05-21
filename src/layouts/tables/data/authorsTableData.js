@@ -194,7 +194,7 @@ export const loadRows = (record = [],callback) => {
     company: <Author  name={data?.company} email={data?.email} />,
     type: (
       <MDTypography component="a" href="#" color="text">
-        <Icon>{data.type === "sea" ? `sailing` : `flight`}</Icon>
+        <Icon>{data.type.toLowerCase() === "sea" ? `sailing` : `flight`}</Icon>
       </MDTypography>
     ),
     cargoType: data?.cargoType,
@@ -209,7 +209,7 @@ export const loadRows = (record = [],callback) => {
       </MDBox>
     ),
     containerCount: calculatePkg(data?.quoteItems || []),
-    createdAt: data?.createdAt,
+    createdAt: data?.createdAt?.substr(0,10),
     polName: data?.polName,
     podName: data?.podName,
     action: (

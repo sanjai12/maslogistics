@@ -56,7 +56,7 @@ const ShipmentQuoteDetails = ({quoteItems,loadAmountDetails}) => {
                             labelId='demo-simple-select-label'
                             label='Container Type'
                             id='containerType'
-                            value={quoteItemData?.[count]?.containerType}
+                            value={quoteItemData?.[count]?.containerType.toUpperCase()}
                           />
                       </Grid>
                       <Grid item xs={1}>

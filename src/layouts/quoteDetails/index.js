@@ -139,7 +139,7 @@ export class ComponentToPrint extends React.PureComponent {
 
     const loadFinalAmount = () => {
       if(this.state.amount && this.state.currency){
-      let loadAmount = data.quoteItems.length * Number(this.state.amount);
+      let loadAmount = Number(this.state.amount);
       let conversion = loadAmount * currencyData?.find(d=>d.code===this.state.currency)?.exchangeRate;
       const currencySymbol = currencyData?.find(d=>d.code===this.state.currency)?.currencySymbol || '';
       return `${currencySymbol} ${conversion + Number(this.state.miscellaneous)}`;

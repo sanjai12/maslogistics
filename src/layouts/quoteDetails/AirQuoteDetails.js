@@ -26,7 +26,7 @@ const AirQuoteDetails = ({quoteItems,loadAmountDetails}) => {
       let amount = 0;
       quoteItemData.forEach((data)=>{
         amount=amount+(data.amount?Number(data.amount):0);
-        amount=(data.tax?(((data.tax)/100)*amount):0)+amount;
+        amount=(data.tax?(((data.tax)/100)*data.amount):0)+amount;
       })
       loadAmountDetails(amount);
     }
